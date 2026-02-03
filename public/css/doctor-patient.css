@@ -1,0 +1,97 @@
+/* Base */
+* {
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  background: linear-gradient(to right, #e3f2fd, #ffffff);
+  color: #333;
+  padding: 25px;
+}
+
+/* Page title */
+h1 {
+  color: #1976d2;
+  margin-bottom: 10px;
+}
+
+/* Section title */
+h2 {
+  color: #0d47a1;
+  margin-top: 30px;
+  margin-bottom: 15px;
+}
+
+/* Patient photo */
+img {
+  display: block;
+  border-radius: 50%;
+  border: 3px solid #1976d2;
+  margin-bottom: 10px;
+}
+
+/* Patient info */
+p {
+  margin: 5px 0;
+}
+
+/* Separator */
+hr {
+  border: none;
+  height: 1px;
+  background: #ccc;
+  margin: 30px 0;
+}
+
+/* Medical record cards */
+div[style*="border:1px solid"] {
+  background: white !important;
+  border: none !important;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  padding: 18px !important;
+  margin-bottom: 20px !important;
+}
+
+/* Record headings */
+strong {
+  color: #0d47a1;
+}
+
+/* Paragraph spacing inside record */
+div[style*="border:1px solid"] p {
+  margin: 8px 0;
+}
+
+/* Edit link */
+a[href^="/doctor/edit-history"] {
+  display: inline-block;
+  margin-top: 10px;
+  font-weight: bold;
+  color: #1976d2;
+}
+
+a[href^="/doctor/edit-history"]:hover {
+  text-decoration: underline;
+}
+
+/* Back link */
+a[href="/dashboard"] {
+  display: inline-block;
+  margin-top: 25px;
+  font-weight: bold;
+  color: #1976d2;
+  text-decoration: none;
+}
+
+a[href="/dashboard"]:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+  body {
+    padding: 15px;
+  }
+}

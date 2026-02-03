@@ -2,6 +2,8 @@
 <html>
 <head>
   <title>Patient Dashboard</title>
+  <link rel="stylesheet" href="/css/patient.css">
+
 </head>
 <body>
 
@@ -72,22 +74,30 @@
   <!-- REQUEST NEW DOCTOR -->
   <h2>Request New Doctor</h2>
 
-  <form method="POST" action="/patient/request-doctor">
+ <form method="POST" action="/patient/request-doctor">
+
+  <label>Select Doctor:</label><br>
+
+  <select name="doctorId" required>
+    <option value="">-- Choose a Doctor --</option>
+
     <% doctors.forEach(doc => { %>
       <% if (
         !patient.doctors.some(d => d._id.toString() === doc._id.toString()) &&
         !patient.pendingDoctorRequests.some(d => d._id.toString() === doc._id.toString())
       ) { %>
-        <div>
-          <input type="radio" name="doctorId" value="<%= doc._id %>" required>
+        <option value="<%= doc._id %>">
           <%= doc.name %> (<%= doc.specialization %>)
-        </div>
+        </option>
       <% } %>
     <% }) %>
+  </select>
 
-    <br>
-    <button type="submit">Send Request</button>
-  </form>
+  <br><br>
+
+  <button type="submit">Send Request</button>
+</form>
+
 
   <hr>
 
@@ -160,7 +170,7 @@
     <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
       
       <strong>Doctor:</strong>
-      <a href="/profile?user=<%= record.doctorId._id %>">
+      <a href="/profile?user=<%= record.doctorId._email %>">
         Dr. <%= record.doctorId.name %>
       </a>
       <br>

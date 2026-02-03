@@ -20,6 +20,8 @@ connectDB();
 // 🔧 Middlewares
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "public")));
+
 
 // 🧠 Session
 app.use(
@@ -36,7 +38,7 @@ app.use(passport.session());
 require("./config/passport");
 
 // 🎨 Static files
-app.use(express.static(path.join(__dirname, "public")));
+
 
 // 🖼️ View engine
 app.set("view engine", "ejs");

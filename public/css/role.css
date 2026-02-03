@@ -1,0 +1,76 @@
+/* Base */
+* {
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(to right, #e3f2fd, #ffffff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #333;
+}
+
+/* Card container */
+form {
+  background: white;
+  padding: 40px 50px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  text-align: center;
+}
+
+/* Title */
+h2 {
+  color: #1976d2;
+  margin-bottom: 30px;
+  font-size: 26px;
+}
+
+/* Buttons */
+button {
+  width: 260px;
+  padding: 15px;
+  font-size: 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+/* Doctor button */
+button[value="doctor"] {
+  background-color: #1976d2;
+  color: white;
+}
+
+button[value="doctor"]:hover {
+  background-color: #0d47a1;
+  transform: translateY(-2px);
+}
+
+/* Patient button */
+button[value="patient"] {
+  background-color: #43a047;
+  color: white;
+}
+
+button[value="patient"]:hover {
+  background-color: #2e7d32;
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+  form {
+    width: 90%;
+    padding: 30px 20px;
+  }
+
+  button {
+    width: 100%;
+  }
+}

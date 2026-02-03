@@ -1,0 +1,112 @@
+/* Base */
+* {
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  background: linear-gradient(to right, #e3f2fd, #ffffff);
+  color: #333;
+  padding: 20px;
+}
+
+/* Headings */
+h1 {
+  color: #1976d2;
+  margin-bottom: 10px;
+}
+
+h2 {
+  color: #0d47a1;
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+
+/* Profile image */
+img {
+  display: block;
+  margin-bottom: 10px;
+}
+
+/* Buttons */
+button {
+  padding: 8px 14px;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0d47a1;
+}
+
+/* Links */
+a {
+  color: #1976d2;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Lists */
+ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+li {
+  background: white;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Forms */
+form {
+  margin-top: 10px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  max-width: 400px;
+  padding: 8px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+textarea {
+  resize: vertical;
+}
+
+/* Section separation */
+hr {
+  border: none;
+  height: 1px;
+  background: #ccc;
+  margin: 30px 0;
+}
+
+/* Medical history cards */
+div[style*="border:1px solid"] {
+  background: white !important;
+  border: none !important;
+  border-radius: 8px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  padding: 15px !important;
+}
+
+/* Logout */
+a[href="/logout"] {
+  display: inline-block;
+  margin-top: 20px;
+  font-weight: bold;
+}
