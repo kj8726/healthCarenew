@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Patient Dashboard</title>
+</head>
+<body>
+
+  <h1>Patient Dashboard</h1>
+
+  <% if (patient.profilePhoto) { %>
+  <img src="<%= patient.profilePhoto %>" width="120" height="120" style="border-radius:50%;">
+<% } else { %>
+  <p>No profile photo</p>
+<% } %>
+
+<br>
+
+  
+  <a href="/profile">
+  <button type="button">View / Edit Profile</button>
+</a>
+
+<hr>
+
+  <p><strong>Name:</strong> <%= patient.name %></p>
+  <p><strong>Email:</strong> <%= patient.email %></p>
+  <p><strong>Age:</strong> <%= patient.age %></p>
+
+  <hr>
+
+  <!-- MY DOCTORS -->
+  <h2>My Doctors</h2>
+
+  <% if (patient.doctors.length === 0) { %>
+    <p>No doctors assigned.</p>
+  <% } else { %>
+    <ul>
+      <% patient.doctors.forEach(doc => { %>
+        <li>
+          <strong><%= doc.name %></strong>
+          (<%= doc.specialization %>)
+
+          <form method="POST" action="/patient/remove-doctor">
+            <input type="hidden" name="doctorId" value="<%= doc._id %>">
+            <button type="submit">Remove Doctor</button>
+          </form>
+        </li>
+        <hr>
+      <% }) %>
+    </ul>
+  <% } %>
+
+  <hr>
+
+  <!-- PENDING DOCTOR REQUESTS -->
+  <h2>Pending Doctor Requests</h2>
+
+  <% if (patient.pendingDoctorRequests.length === 0) { %>
+    <p>No pending requests.</p>
+  <% } else { %>
+    <ul>
+      <% patient.pendingDoctorRequests.forEach(doc => { %>
+        <li>
+          Request sent to <strong><%= doc.name %></strong>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+
+  <hr>
+
+  <!-- REQUEST NEW DOCTOR -->
+  <h2>Request New Doctor</h2>
+
+  <form method="POST" action="/patient/request-doctor">
+    <% doctors.forEach(doc => { %>
+      <% if (
+        !patient.doctors.some(d => d._id.toString() === doc._id.toString()) &&
+        !patient.pendingDoctorRequests.some(d => d._id.toString() === doc._id.toString())
+      ) { %>
+        <div>
+          <input type="radio" name="doctorId" value="<%= doc._id %>" required>
+          <%= doc.name %> (<%= doc.specialization %>)
+        </div>
+      <% } %>
+    <% }) %>
+
+    <br>
+    <button type="submit">Send Request</button>
+  </form>
+
+  <hr>
+
+  <!-- BOOK APPOINTMENT -->
+  <h2>Book Appointment</h2>
+
+  <% if (patient.doctors.length === 0) { %>
+    <p>Add a doctor to book appointment.</p>
+  <% } else { %>
+    <form method="POST" action="/book-appointment">
+
+      <label>Select Doctor:</label><br>
+      <select name="doctorId" required>
+        <% patient.doctors.forEach(doc => { %>
+          <option value="<%= doc._id %>">
+            <%= doc.name %> (<%= doc.specialization %>)
+          </option>
+        <% }) %>
+      </select>
+
+      <br><br>
+
+      <label>Date:</label><br>
+      <input type="date" name="date" required><br><br>
+
+      <label>Time:</label><br>
+      <input type="time" name="time" required><br><br>
+
+      <label>Reason:</label><br>
+      <textarea name="reason"></textarea><br><br>
+
+      <button type="submit">Book Appointment</button>
+    </form>
+  <% } %>
+
+  <hr>
+
+  <!-- MY APPOINTMENTS -->
+  <h2>My Appointments</h2>
+
+  <% if (appointments.length === 0) { %>
+    <p>No appointments.</p>
+  <% } else { %>
+    <ul>
+      <% appointments.forEach(app => { %>
+        <li>
+          Doctor: <%= app.doctorId.name %><br>
+          Date: <%= app.date %><br>
+          Time: <%= app.time %><br>
+          Status: <%= app.status %>
+
+          <form method="POST" action="/patient/cancel-appointment">
+            <input type="hidden" name="appointmentId" value="<%= app._id %>">
+            <button type="submit">Cancel</button>
+          </form>
+        </li>
+        <hr>
+      <% }) %>
+    </ul>
+  <% } %>
+
+  <hr>
+
+<h2>Medical History</h2>
+
+<% if (!history || history.length === 0) { %>
+  <p>No medical records available.</p>
+<% } else { %>
+  <% history.forEach(record => { %>
+    <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+      
+      <strong>Doctor:</strong>
+      <a href="/profile?user=<%= record.doctorId._id %>">
+        Dr. <%= record.doctorId.name %>
+      </a>
+      <br>
+
+      <strong>Date:</strong>
+      <%= record.createdAt.toDateString() %>
+      <br><br>
+
+      <strong>Advice:</strong>
+      <p><%= record.advice %></p>
+
+      <strong>Medicines:</strong>
+      <p>
+        <%= record.medicines.length > 0
+          ? record.medicines.join(", ")
+          : "None" %>
+      </p>
+
+      <% if (record.notes) { %>
+        <strong>Notes:</strong>
+        <p><%= record.notes %></p>
+      <% } %>
+
+    </div>
+  <% }) %>
+<% } %>
+
+
+  <br>
+  <a href="/logout">Logout</a>
+
+</body>
+</html>

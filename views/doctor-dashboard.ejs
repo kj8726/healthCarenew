@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Doctor Dashboard</title>
+</head>
+<body>
+
+  <h1>Doctor Dashboard</h1>
+  <% if (doctor.profilePhoto) { %>
+  <img src="<%= doctor.profilePhoto %>" width="120" height="120" style="border-radius:50%;">
+<% } else { %>
+  <p>No profile photo</p>
+<% } %>
+
+<br>
+
+  <a href="/profile">
+  <button type="button">View / Edit Profile</button>
+</a>
+
+<hr>
+
+
+  <p><strong>Name:</strong> Dr. <%= doctor.name %></p>
+  <p><strong>Specialization:</strong> <%= doctor.specialization %></p>
+  <p><strong>Email:</strong> <%= doctor.email %></p>
+
+  
+  <hr>
+
+  <!-- PENDING PATIENT REQUESTS -->
+  <h2>Pending Patient Requests</h2>
+
+  <% if (doctor.pendingPatients.length === 0) { %>
+    <p>No pending requests.</p>
+  <% } else { %>
+    <ul>
+      <% doctor.pendingPatients.forEach(patient => { %>
+        <li>
+          <strong><%= patient.name %></strong>
+
+          <form method="POST" action="/doctor/approve-patient">
+            <input type="hidden" name="patientId" value="<%= patient._id %>">
+            <button type="submit">Approve</button>
+          </form>
+
+          <form method="POST" action="/doctor/reject-patient">
+            <input type="hidden" name="patientId" value="<%= patient._id %>">
+            <button type="submit">Reject</button>
+          </form>
+        </li>
+        <hr>
+      <% }) %>
+    </ul>
+  <% } %>
+
+  <hr>
+
+  <!-- MY PATIENTS -->
+  <h2>My Patients</h2>
+
+  <% if (patients.length === 0) { %>
+    <p>No patients assigned.</p>
+  <% } else { %>
+    <ul>
+      <% patients.forEach(patient => { %>
+        <li>
+          Name: <%= patient.name %><br>
+          Age: <%= patient.age %><br>
+          Contact: <%= patient.contact %>
+          <a href="/doctor/patient/<%= patient._id %>">
+    View Medical Detail
+  </a>
+
+<!-- Toggle Button -->
+<button
+  type="button"
+  onclick="toggleForm('<%= patient._id %>')"
+>
+  ➕ Add Medical Record
+</button>
+
+<!-- Hidden Form -->
+<div
+  id="history-form-<%= patient._id %>"
+  style="display:none; margin-top:10px;"
+>
+  <form method="POST" action="/doctor/add-history">
+    <input type="hidden" name="patientId" value="<%= patient._id %>">
+
+    <label>Doctor Advice:</label><br>
+    <textarea name="advice" required></textarea><br><br>
+
+    <label>Medicines (comma separated):</label><br>
+    <input type="text" name="medicines"><br><br>
+
+    <label>Additional Notes:</label><br>
+    <textarea name="notes"></textarea><br><br>
+
+    <button type="submit">Save Medical Record</button>
+  </form>
+</div>
+
+<hr>
+
+<hr>
+
+
+          <form method="POST"
+  action="/doctor/remove-patient"
+  onsubmit="return confirm('Are you sure you want to remove this patient?');"
+>
+  <input type="hidden" name="patientId" value="<%= patient._id %>">
+  <button type="submit">Remove Patient</button>
+</form>
+
+        </li>
+        <hr>
+      <% }) %>
+    </ul>
+  <% } %>
+
+  <hr>
+
+  <!-- APPOINTMENTS -->
+  <h2>Appointments</h2>
+
+  <% if (appointments.length === 0) { %>
+    <p>No appointments.</p>
+  <% } else { %>
+    <ul>
+      <% appointments.forEach(app => { %>
+        <li>
+          Patient: <%= app.patientId.name %><br>
+          Date: <%= app.date %><br>
+          Time: <%= app.time %><br>
+          Reason: <%= app.reason %><br>
+          Status: <%= app.status %>
+        </li>
+        <hr>
+      <% }) %>
+    </ul>
+  <% } %>
+
+  <br>
+  <a href="/logout">Logout</a>
+<script>
+  function toggleForm(id) {
+    const form = document.getElementById("history-form-" + id);
+    if (form.style.display === "none") {
+      form.style.display = "block";
+    } else {
+      form.style.display = "none";
+    }
+  }
+</script>
+
+</body>
+</html>

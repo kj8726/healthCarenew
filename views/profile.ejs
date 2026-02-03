@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Profile</title>
+</head>
+<body>
+
+  <h1>My Profile</h1>
+
+  <% if (user.profilePhoto) { %>
+    <img src="<%= user.profilePhoto %>" width="150"><br><br>
+  <% } %>
+
+  <form method="POST" action="/profile" enctype="multipart/form-data">
+
+    <label>Profile Photo:</label><br>
+    <input type="file" name="profilePhoto"><br><br>
+
+    <label>Name:</label><br>
+    <input type="text" name="name" value="<%= user.name %>"><br><br>
+
+    <% if (user.role === "doctor") { %>
+
+      <h3>Doctor Details</h3>
+
+      <label>Degree:</label><br>
+      <input type="text" name="degree" value="<%= user.degree || '' %>"><br><br>
+
+      <label>Specialization:</label><br>
+      <input type="text" name="specialization" value="<%= user.specialization || '' %>"><br><br>
+
+      <label>Experience (years):</label><br>
+      <input type="number" name="experience" value="<%= user.experience || '' %>"><br><br>
+
+      <label>About:</label><br>
+      <textarea name="about"><%= user.about || '' %></textarea><br><br>
+
+      <label>Clinic Address:</label><br>
+      <textarea name="clinicAddress"><%= user.clinicAddress || '' %></textarea><br><br>
+
+    <% } %>
+
+    <% if (user.role === "patient") { %>
+
+      <h3>Patient Details</h3>
+
+      <label>Age:</label><br>
+      <input type="number" name="age" value="<%= user.age || '' %>"><br><br>
+
+      <label>Address:</label><br>
+      <textarea name="address"><%= user.address || '' %></textarea><br><br>
+
+      <label>Blood Group:</label><br>
+      <input type="text" name="bloodGroup" value="<%= user.bloodGroup || '' %>"><br><br>
+
+      <label>Emergency Contact:</label><br>
+      <input type="text" name="emergencyContact" value="<%= user.emergencyContact || '' %>"><br><br>
+
+    <% } %>
+
+    <button type="submit">Save Profile</button>
+  </form>
+
+  <br>
+  <a href="/dashboard">Back to Dashboard</a>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit Medical History</title>
+</head>
+<body>
+
+  <h1>Edit Medical Record</h1>
+
+  <form method="POST" action="/doctor/edit-history/<%= record._id %>">
+
+    <label>Doctor Advice:</label><br>
+    <textarea name="advice" required><%= record.advice %></textarea><br><br>
+
+    <label>Medicines (comma separated):</label><br>
+    <input type="text" name="medicines"
+      value="<%= record.medicines.join(', ') %>"><br><br>
+
+    <label>Notes:</label><br>
+    <textarea name="notes"><%= record.notes || '' %></textarea><br><br>
+
+    <button type="submit">Update Record</button>
+  </form>
+
+  <br>
+  <a href="/doctor/patient/<%= record.patientId %>">⬅ Back</a>
+
+</body>
+</html>

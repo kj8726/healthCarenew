@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Patient Medical History</title>
+</head>
+<body>
+
+  <h1>Patient: <%= patient.name %></h1>
+
+  <% if (patient.profilePhoto) { %>
+    <img src="<%= patient.profilePhoto %>" width="120" height="120" style="border-radius:50%;">
+  <% } %>
+
+  <p><strong>Age:</strong> <%= patient.age || "N/A" %></p>
+  <p><strong>Contact:</strong> <%= patient.contact || "N/A" %></p>
+
+  <hr>
+
+  <h2>Medical History</h2>
+
+  <% if (!history || history.length === 0) { %>
+    <p>No medical records available.</p>
+  <% } else { %>
+    <% history.forEach(record => { %>
+      <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+
+        <strong>Date:</strong>
+        <%= record.createdAt.toDateString() %>
+        <br><br>
+
+        <strong>Doctor:</strong>
+        Dr. <%= record.doctorId.name %>
+        <br><br>
+
+        <strong>Advice:</strong>
+        <p><%= record.advice %></p>
+
+        <strong>Medicines:</strong>
+        <p>
+          <%= record.medicines.length > 0
+            ? record.medicines.join(", ")
+            : "None" %>
+        </p>
+
+        <% if (record.notes) { %>
+          <strong>Notes:</strong>
+          <p><%= record.notes %></p>
+        <% } %>
+<% if (
+  record.doctorId._id.toString() === doctorId.toString()
+) { %>
+  <a href="/doctor/edit-history/<%= record._id %>">
+    ✏️ Edit Record
+  </a>
+<% } %>
+
+      </div>
+    <% }) %>
+  <% } %>
+
+  <br>
+  <a href="/dashboard">⬅ Back to Dashboard</a>
+
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Complete Profile</title>
+</head>
+<body>
+  <h2>Complete Your Profile</h2>
+
+  <form method="POST" action="/complete-profile">
+
+    <label>Contact Number:</label><br>
+    <input type="text" name="contact" required><br><br>
+
+    <label>Age:</label><br>
+    <input type="number" name="age" required><br><br>
+
+    <label>Address:</label><br>
+    <textarea name="address" required></textarea><br><br>
+
+    <% if (user.role === "doctor") { %>
+      <label>Specialization:</label><br>
+      <input type="text" name="specialization" required><br><br>
+    <% } %>
+
+    <% if (user.role === "patient") { %>
+      <label>Medical Conditions (comma separated):</label><br>
+      <input type="text" name="medicalConditions"><br><br>
+    <% } %>
+
+    <button type="submit">Save Profile</button>
+  </form>
+</body>
+</html>
