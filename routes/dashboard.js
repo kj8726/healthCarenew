@@ -15,57 +15,64 @@ const ensureAuth = (req, res, next) => {
 router.get("/dashboard", ensureAuth, async (req, res) => {
   const user = await User.findById(req.user.id);
 
+  // 🚨 ROLE NOT CHOSEN YET (FIRST CHECK)
+  if (!user.roleSelected) {
+    return res.render("choose-role");
+  }
+
+  // 🚨 PROFILE NOT COMPLETED (SECOND CHECK)
+  if (!user.profileCompleted) {
+    return res.render(
+    user.role === "doctor"
+      ? "complete-profile-doctor"
+      : "complete-profile-patient",
+    { user }
+  );
+  }
+
   // 👨‍⚕️ Doctor Dashboard
   if (user.role === "doctor") {
-  const doctor = await User.findById(user._id)
-  .populate("patients")
-  .populate("pendingPatients");
+    const doctor = await User.findById(user._id)
+      .populate("patients")
+      .populate("pendingPatients");
 
-const patients = doctor.patients;
+    const appointments = await Appointment.find({
+      doctorId: user._id
+    }).populate("patientId");
 
-
-  const appointments = await Appointment.find({
-    doctorId: user._id
-  }).populate("patientId");
-
-  return res.render("doctor-dashboard", {
-    doctor: user,
-    patients,
-    appointments
-  });
-}
-
+    return res.render("doctor-dashboard", {
+      doctor,
+      patients: doctor.patients,
+      appointments
+    });
+  }
 
   // 👤 Patient Dashboard
-  // 👤 Patient Dashboard
-if (user.role === "patient") {
-  const patient = await User.findById(req.user._id)
-    .populate("doctors")
-    .populate("pendingDoctorRequests");
+  if (user.role === "patient") {
+    const patient = await User.findById(user._id)
+      .populate("doctors")
+      .populate("pendingDoctorRequests");
 
-  const doctors = await User.find({ role: "doctor" });
+    const doctors = await User.find({ role: "doctor" });
 
-  const appointments = await Appointment.find({
-    patientId: patient._id
-  }).populate("doctorId");
+    const appointments = await Appointment.find({
+      patientId: patient._id
+    }).populate("doctorId");
 
     const history = await MedicalHistory.find({
-    patientId: patient._id
-  })
-    .populate("doctorId")
-    .sort({ createdAt: -1 });
+      patientId: patient._id
+    })
+      .populate("doctorId")
+      .sort({ createdAt: -1 });
 
-  // 🔒 SAFETY NET (IMPORTANT)
-  patient.doctors = patient.doctors || [];
-  patient.pendingDoctorRequests = patient.pendingDoctorRequests || [];
+    return res.render("patient-dashboard", {
+      patient,
+      doctors,
+      appointments,
+      history
+    });
+  }
 
-  return res.render("patient-dashboard", {
-    patient,
-    doctors,
-    appointments,
-    history
-  });
-}
   res.redirect("/");
 });
 

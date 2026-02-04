@@ -1,22 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
   <title>Choose Role</title>
-  <link rel="stylesheet" href="/css/role.css">
+  <link rel="stylesheet" href="/css/role.css" />
 </head>
 <body>
-  <h2>Select Your Role</h2>
 
-  <form method="POST" action="/choose-role">
-    <button type="submit" name="role" value="doctor">
-      👨‍⚕️ I am a Doctor
-    </button>
+  <div class="role-container">
+    <h2>Select Your Role</h2>
+    <p class="subtitle">Tell us who you are to personalize your experience</p>
 
-    <br><br>
+    <form method="POST" action="/choose-role" class="role-form">
 
-    <button type="submit" name="role" value="patient">
-      👤 I am a Patient
-    </button>
-  </form>
+      <button type="submit" name="role" value="doctor" class="role-card doctor">
+        <span class="icon">👨‍⚕️</span>
+        <span class="title">Doctor</span>
+        <span class="desc">Manage patients & appointments</span>
+      </button>
+
+      <button type="submit" name="role" value="patient" class="role-card patient">
+        <span class="icon">👤</span>
+        <span class="title">Patient</span>
+        <span class="desc">Book appointments & track health</span>
+      </button>
+
+    </form>
+  </div>
+
 </body>
 </html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Complete Doctor Profile</title>
+  <link rel="stylesheet" href="/css/complete-profile-doctor.css">
+</head>
+
+<body>
+  <div class="page">
+
+    <div class="profile-card">
+      <div class="header">
+        <h2>👨‍⚕️ Doctor Profile</h2>
+        <p>Complete your professional details</p>
+      </div>
+
+      <form method="POST" action="/complete-profile">
+
+        <div class="form-group">
+          <label>Contact Number</label>
+          <input type="text" name="contact" placeholder="Enter contact number" required>
+        </div>
+
+        <div class="form-group">
+          <label>Age</label>
+          <input type="number" name="age" placeholder="Enter age" required>
+        </div>
+
+        <div class="form-group">
+          <label>Address</label>
+          <textarea name="address" placeholder="Enter address" required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Specialization</label>
+          <input type="text" name="specialization" placeholder="e.g. Cardiologist" required>
+        </div>
+        <div class="form-group">
+          <label>Experience</label>
+          <input type="number" name="experience" placeholder="e.g. 5 " required>
+        </div>
+        <div class="form-group">
+          <label>About</label>
+          <input type="text" name="about" placeholder="you can add timing and other details " required>
+        </div>
+        <div class="form-group">
+          <label>Degree</label>
+          <input type="text" name="degree" placeholder="e.g. MBBS with some speacialization " required>
+        </div>
+
+        <button type="submit" class="save-btn">
+          Save Profile
+        </button>
+
+      </form>
+    </div>
+
+  </div>
+</body>
+</html>

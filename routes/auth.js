@@ -20,14 +20,14 @@ router.get(
   passport.authenticate("google", { failureRedirect: "/" }),
   (req, res) => {
     // New user → choose role
-    if (!req.user.role) {
-      return res.redirect("/choose-role");
-    }
+    // if (!req.user.role) {
+    //   return res.redirect("/choose-role");
+    // }
 
-    // Profile not completed
-    if (!req.user.profileCompleted) {
-      return res.redirect("/complete-profile");
-    }
+    // // Profile not completed
+    // if (!req.user.profileCompleted) {
+    //   return res.redirect("/complete-profile");
+    // }
 
     // Everything done
     res.redirect("/dashboard");

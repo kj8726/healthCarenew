@@ -1,76 +1,99 @@
-/* Base */
+/* Reset */
 * {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
   min-height: 100vh;
-  background: linear-gradient(to right, #e3f2fd, #ffffff);
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+}
+
+/* Container */
+.role-container {
+  background: #ffffff;
+  padding: 40px;
+  width: 380px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* Headings */
+.role-container h2 {
+  font-size: 26px;
+  margin-bottom: 8px;
   color: #333;
 }
 
-/* Card container */
-form {
-  background: white;
-  padding: 40px 50px;
-  border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-  text-align: center;
-}
-
-/* Title */
-h2 {
-  color: #1976d2;
+.subtitle {
+  font-size: 14px;
+  color: #666;
   margin-bottom: 30px;
-  font-size: 26px;
 }
 
-/* Buttons */
-button {
-  width: 260px;
-  padding: 15px;
-  font-size: 18px;
+/* Form */
+.role-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Cards */
+.role-card {
   border: none;
-  border-radius: 8px;
+  border-radius: 14px;
+  padding: 20px;
   cursor: pointer;
-  font-weight: bold;
-  transition: all 0.2s ease;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: all 0.25s ease;
+  background: #f8f9fb;
 }
 
-/* Doctor button */
-button[value="doctor"] {
-  background-color: #1976d2;
-  color: white;
+.role-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
-button[value="doctor"]:hover {
-  background-color: #0d47a1;
-  transform: translateY(-2px);
+/* Icons */
+.role-card .icon {
+  font-size: 32px;
 }
 
-/* Patient button */
-button[value="patient"] {
-  background-color: #43a047;
-  color: white;
+/* Text */
+.role-card .title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #222;
 }
 
-button[value="patient"]:hover {
-  background-color: #2e7d32;
-  transform: translateY(-2px);
+.role-card .desc {
+  font-size: 13px;
+  color: #555;
 }
 
-/* Responsive */
-@media (max-width: 500px) {
-  form {
+/* Doctor */
+.role-card.doctor {
+  border-left: 6px solid #4facfe;
+}
+
+/* Patient */
+.role-card.patient {
+  border-left: 6px solid #00c897;
+}
+
+/* Mobile */
+@media (max-width: 420px) {
+  .role-container {
     width: 90%;
-    padding: 30px 20px;
-  }
-
-  button {
-    width: 100%;
+    padding: 30px;
   }
 }

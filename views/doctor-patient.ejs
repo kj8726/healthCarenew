@@ -1,20 +1,39 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Patient Medical History</title>
   <link rel="stylesheet" href="/css/doctor-patient.css">
-
 </head>
+
 <body>
 
   <h1>Patient: <%= patient.name %></h1>
 
   <% if (patient.profilePhoto) { %>
-    <img src="<%= patient.profilePhoto %>" width="120" height="120" style="border-radius:50%;">
+    <img
+      src="<%= patient.profilePhoto %>"
+      width="120"
+      height="120"
+      style="border-radius:50%; margin-bottom:10px;"
+      alt="Patient Photo"
+    >
   <% } %>
 
   <p><strong>Age:</strong> <%= patient.age || "N/A" %></p>
   <p><strong>Contact:</strong> <%= patient.contact || "N/A" %></p>
+
+  <!-- 🩺 Patient-reported medical conditions -->
+  <% if (patient.medicalConditions && patient.medicalConditions.length > 0) { %>
+    <p><strong>Patient-Reported Medical Conditions:</strong></p>
+    <ul>
+      <% patient.medicalConditions.forEach(condition => { %>
+        <li><%= condition %></li>
+      <% }) %>
+    </ul>
+  <% } else { %>
+    <p><strong>Patient-Reported Medical Conditions:</strong> None</p>
+  <% } %>
 
   <hr>
 
@@ -24,7 +43,7 @@
     <p>No medical records available.</p>
   <% } else { %>
     <% history.forEach(record => { %>
-      <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+      <div style="border:1px solid #ccc; padding:12px; margin-bottom:15px; border-radius:6px;">
 
         <strong>Date:</strong>
         <%= record.createdAt.toDateString() %>
@@ -39,7 +58,7 @@
 
         <strong>Medicines:</strong>
         <p>
-          <%= record.medicines.length > 0
+          <%= record.medicines && record.medicines.length > 0
             ? record.medicines.join(", ")
             : "None" %>
         </p>
@@ -48,13 +67,12 @@
           <strong>Notes:</strong>
           <p><%= record.notes %></p>
         <% } %>
-<% if (
-  record.doctorId._id.toString() === doctorId.toString()
-) { %>
-  <a href="/doctor/edit-history/<%= record._id %>">
-    ✏️ Edit Record
-  </a>
-<% } %>
+
+        <% if (record.doctorId._id.toString() === doctorId.toString()) { %>
+          <a href="/doctor/edit-history/<%= record._id %>">
+            ✏️ Edit Record
+          </a>
+        <% } %>
 
       </div>
     <% }) %>

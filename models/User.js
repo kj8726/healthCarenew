@@ -15,10 +15,17 @@ const UserSchema = new mongoose.Schema(
     },
 
     role: {
-      type: String,
-      enum: ["doctor", "patient"],
-      required: true
-    },
+  type: String,
+  enum: ["doctor", "patient"],
+  default: "patient",   // safe default
+  required: true
+},
+
+roleSelected: {
+  type: Boolean,
+  default: false        // 👈 THIS IS THE KEY
+},
+
 
     name: String,
     contact: String,
