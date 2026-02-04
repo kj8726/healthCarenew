@@ -1,96 +1,191 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Patient Medical History</title>
-  <link rel="stylesheet" href="/css/doctor-patient.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Medical History - <%= patient.name %></title>
+    <link rel="stylesheet" href="/css/doctor-patient.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-
 <body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header-section">
+            <div class="header-content">
+                <h1><i class="fas fa-user-injured"></i> Patient Medical History</h1>
+                <a href="/dashboard" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
 
-  <h1>Patient: <%= patient.name %></h1>
+        <!-- Patient Profile Card -->
+        <div class="patient-profile-card">
+            <div class="profile-header">
+                <div class="profile-info">
+                    <% if (patient.profilePhoto) { %>
+                        <img src="<%= patient.profilePhoto %>" 
+                             class="profile-photo-large" 
+                             alt="<%= patient.name %>">
+                    <% } else { %>
+                        <div class="profile-photo-placeholder">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    <% } %>
+                    <div class="profile-details">
+                        <h2><%= patient.name %></h2>
+                        <div class="patient-meta">
+                            <span class="meta-item">
+                                <i class="fas fa-birthday-cake"></i>
+                                <strong>Age:</strong> <%= patient.age || "N/A" %>
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-phone"></i>
+                                <strong>Contact:</strong> <%= patient.contact || "N/A" %>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-  <% if (patient.profilePhoto) { %>
-    <img
-      src="<%= patient.profilePhoto %>"
-      width="120"
-      height="120"
-      style="border-radius:50%; margin-bottom:10px;"
-      alt="Patient Photo"
-    >
-  <% } %>
+            <!-- Patient Medical Conditions -->
+            <div class="medical-conditions-section">
+                <div class="section-header">
+                    <h3><i class="fas fa-heartbeat"></i> Patient-Reported Medical Conditions</h3>
+                </div>
+                <% if (patient.medicalConditions && patient.medicalConditions.length > 0) { %>
+                    <div class="conditions-grid">
+                        <% patient.medicalConditions.forEach(condition => { %>
+                            <div class="condition-tag">
+                                <i class="fas fa-stethoscope"></i>
+                                <%= condition %>
+                            </div>
+                        <% }) %>
+                    </div>
+                <% } else { %>
+                    <div class="empty-state">
+                        <i class="fas fa-clipboard-list"></i>
+                        <p>No medical conditions reported by the patient</p>
+                    </div>
+                <% } %>
+            </div>
+        </div>
 
-  <p><strong>Age:</strong> <%= patient.age || "N/A" %></p>
-  <p><strong>Contact:</strong> <%= patient.contact || "N/A" %></p>
+        <!-- Medical History Records -->
+        <div class="medical-history-section">
+            <div class="section-header">
+                <h3><i class="fas fa-file-medical-alt"></i> Medical History Records</h3>
+                <% if (history && history.length > 0) { %>
+                    <span class="records-count"><%= history.length %> records</span>
+                <% } %>
+            </div>
 
-  <!-- 🩺 Patient-reported medical conditions -->
-  <% if (patient.medicalConditions && patient.medicalConditions.length > 0) { %>
-    <p><strong>Patient-Reported Medical Conditions:</strong></p>
-    <ul>
-      <% patient.medicalConditions.forEach(condition => { %>
-        <li><%= condition %></li>
-      <% }) %>
-    </ul>
-  <% } else { %>
-    <p><strong>Patient-Reported Medical Conditions:</strong> None</p>
-  <% } %>
+            <% if (!history || history.length === 0) { %>
+                <div class="empty-history">
+                    <i class="fas fa-file-medical"></i>
+                    <h4>No Medical Records Available</h4>
+                    <p>No medical history has been recorded for this patient yet.</p>
+                </div>
+            <% } else { %>
+                <div class="history-timeline">
+                    <% history.forEach((record, index) => { %>
+                        <div class="timeline-item">
+                            <div class="timeline-marker">
+                                <div class="marker-icon">
+                                    <i class="fas fa-file-medical"></i>
+                                </div>
+                                <% if (index < history.length - 1) { %>
+                                    <div class="timeline-line"></div>
+                                <% } %>
+                            </div>
+                            
+                            <div class="record-card">
+                                <div class="record-header">
+                                    <div class="record-date">
+                                        <i class="far fa-calendar"></i>
+                                        <%= record.createdAt.toDateString() %>
+                                    </div>
+                                    <div class="record-doctor">
+                                        <i class="fas fa-user-md"></i>
+                                        <% if (record.doctorId) { %>
+                                            <strong>Dr. <%= record.doctorId.name %></strong>
+                                        <% } else { %>
+                                            <span class="deleted-doctor">
+                                                <i class="fas fa-user-slash"></i> Account Deleted
+                                            </span>
+                                        <% } %>
+                                    </div>
+                                </div>
 
-  <hr>
+                                <div class="record-content">
+                                    <!-- Advice Section -->
+                                    <div class="record-section">
+                                        <div class="section-title">
+                                            <i class="fas fa-comment-medical"></i>
+                                            <h4>Medical Advice</h4>
+                                        </div>
+                                        <div class="section-content">
+                                            <%= record.advice %>
+                                        </div>
+                                    </div>
 
-  <h2>Medical History</h2>
+                                    <!-- Medicines Section -->
+                                    <div class="record-section">
+                                        <div class="section-title">
+                                            <i class="fas fa-pills"></i>
+                                            <h4>Prescribed Medicines</h4>
+                                        </div>
+                                        <div class="section-content">
+                                            <% if (record.medicines && record.medicines.length > 0) { %>
+                                                <div class="medicines-list">
+                                                    <% record.medicines.forEach(medicine => { %>
+                                                        <span class="medicine-tag">
+                                                            <i class="fas fa-capsules"></i>
+                                                            <%= medicine %>
+                                                        </span>
+                                                    <% }) %>
+                                                </div>
+                                            <% } else { %>
+                                                <p class="no-medicines">No medicines prescribed</p>
+                                            <% } %>
+                                        </div>
+                                    </div>
 
-  <% if (!history || history.length === 0) { %>
-    <p>No medical records available.</p>
-  <% } else { %>
-    <% history.forEach(record => { %>
-      <div style="border:1px solid #ccc; padding:12px; margin-bottom:15px; border-radius:6px;">
+                                    <!-- Notes Section -->
+                                    <% if (record.notes) { %>
+                                        <div class="record-section">
+                                            <div class="section-title">
+                                                <i class="fas fa-sticky-note"></i>
+                                                <h4>Additional Notes</h4>
+                                            </div>
+                                            <div class="section-content">
+                                                <%= record.notes %>
+                                            </div>
+                                        </div>
+                                    <% } %>
+                                </div>
 
-        <strong>Date:</strong>
-        <%= record.createdAt.toDateString() %>
-        <br><br>
+                                <!-- Edit Button (only for the doctor who created the record) -->
+                                <% if (record.doctorId && record.doctorId._id.toString() === doctorId.toString()) { %>
+                                    <div class="record-actions">
+                                        <a href="/doctor/edit-history/<%= record._id %>" class="edit-btn">
+                                            <i class="fas fa-edit"></i> Edit Record
+                                        </a>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } %>
+        </div>
 
-        <strong>Doctor:</strong>
-<% if (record.doctorId) { %>
-  Dr. <%= record.doctorId.name %>
-<% } else { %>
-  <span style="color:red; font-size:12px;">
-    (account deleted)
-  </span>
-<% } %>
-<br><br>
-
-
-        <strong>Advice:</strong>
-        <p><%= record.advice %></p>
-
-        <strong>Medicines:</strong>
-        <p>
-          <%= record.medicines && record.medicines.length > 0
-            ? record.medicines.join(", ")
-            : "None" %>
-        </p>
-
-        <% if (record.notes) { %>
-          <strong>Notes:</strong>
-          <p><%= record.notes %></p>
-        <% } %>
-
-        <% if (
-  record.doctorId &&
-  record.doctorId._id.toString() === doctorId.toString()
-) { %>
-  <a href="/doctor/edit-history/<%= record._id %>">
-    ✏️ Edit Record
-  </a>
-<% } %>
-
-
-      </div>
-    <% }) %>
-  <% } %>
-
-  <br>
-  <a href="/dashboard">⬅ Back to Dashboard</a>
-
+        <!-- Footer Navigation -->
+        <div class="footer-nav">
+            <a href="/dashboard" class="nav-btn">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
 </body>
 </html>

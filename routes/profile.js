@@ -99,17 +99,18 @@ router.post(
   ensureAuth,
   upload.single("profilePhoto"),
   async (req, res) => {
+    
     const updates = req.body;
 
     if (req.file) {
+      
       updates.profilePhoto = req.file.path;
-    }
+    } 
 
     await User.findByIdAndUpdate(req.user.id, updates);
-    res.redirect("/profile");
+    res.redirect("/dashboard");
   }
 );
-
 
 // 🗑️ DELETE PROFILE
 router.post("/profile/delete", ensureAuth, async (req, res) => {

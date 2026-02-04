@@ -1,200 +1,673 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Doctor Dashboard</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doctor Dashboard | HealthCare+</title>
   <link rel="stylesheet" href="/css/doctor.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" type="image/x-icon" href="/images/medical-icon.png">
 </head>
 <body>
 
-  <h1>Doctor Dashboard</h1>
-  <% if (doctor.profilePhoto) { %>
-  <img src="<%= doctor.profilePhoto %>" width="120" height="120" style="border-radius:50%;">
-<% } else { %>
-  <p>No profile photo</p>
-<% } %>
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-spinner"></div>
+  </div>
 
-<br>
-
-  <a href="/profile">
-  <button type="button">View / Edit Profile</button>
-</a>
-
-<hr>
-
-
-  <p><strong>Name:</strong> Dr. <%= doctor.name %></p>
-  <p><strong>Specialization:</strong> <%= doctor.specialization %></p>
-  <p><strong>Email:</strong> <%= doctor.email %></p>
-
-  
-  <hr>
-
-  <!-- PENDING PATIENT REQUESTS -->
-  <h2>Pending Patient Requests</h2>
-
-  <% if (doctor.pendingPatients.length === 0) { %>
-    <p>No pending requests.</p>
-  <% } else { %>
-    <ul>
-      <% doctor.pendingPatients.forEach(patient => { %>
-        <li>
-          <strong><%= patient.name %></strong>
-
-          <form method="POST" action="/doctor/approve-patient">
-            <input type="hidden" name="patientId" value="<%= patient._id %>">
-            <button type="submit">Approve</button>
-          </form>
-
-          <form method="POST" action="/doctor/reject-patient">
-            <input type="hidden" name="patientId" value="<%= patient._id %>">
-            <button type="submit">Reject</button>
-          </form>
-        </li>
-        <hr>
-      <% }) %>
-    </ul>
-  <% } %>
-
-  <hr>
-
-  <!-- MY PATIENTS -->
-  <h2>My Patients</h2>
-
-  <% if (patients.length === 0) { %>
-    <p>No patients assigned.</p>
-  <% } else { %>
-    <ul>
-      <% patients.forEach(patient => { %>
-        <li>
-          Name: <%= patient.name %><br>
-          Age: <%= patient.age %><br>
-          Contact: <%= patient.contact %>
-          <a href="/doctor/patient/<%= patient._id %>">
-    View Medical Detail
-  </a>
-
-<!-- Toggle Button -->
-<button
-  type="button"
-  onclick="toggleForm('<%= patient._id %>')"
->
-  ➕ Add Medical Record
-</button>
-
-<!-- Hidden Form -->
-<div
-  id="history-form-<%= patient._id %>"
-  style="display:none; margin-top:10px;"
->
-  <form method="POST" action="/doctor/add-history">
-    <input type="hidden" name="patientId" value="<%= patient._id %>">
-
-    <label>Doctor Advice:</label><br>
-    <textarea name="advice" required></textarea><br><br>
-
-    <label>Medicines (comma separated):</label><br>
-    <input type="text" name="medicines"><br><br>
-
-    <label>Additional Notes:</label><br>
-    <textarea name="notes"></textarea><br><br>
-
-    <button type="submit">Save Medical Record</button>
-  </form>
-</div>
-
-<hr>
-
-<hr>
-
-
-          <form method="POST"
-  action="/doctor/remove-patient"
-  onsubmit="return confirm('Are you sure you want to remove this patient?');"
->
-  <input type="hidden" name="patientId" value="<%= patient._id %>">
-  <button type="submit">Remove Patient</button>
-</form>
-
-        </li>
-        <hr>
-      <% }) %>
-    </ul>
-  <% } %>
-
-  <hr>
-
-  <!-- APPOINTMENTS -->
-  <hr>
-
-<!-- APPOINTMENTS -->
-<h2>Appointments</h2>
-
-<% if (appointments.length === 0) { %>
-  <p>No appointments.</p>
-<% } else { %>
-  <ul style="list-style:none; padding:0;">
-    <% appointments.forEach(app => { %>
-
-      <li class="appointment-card">
-
-        <!-- ❌ Delete permanently (only if cancelled) -->
-        <% if (app.status === "cancelled") { %>
-          <form
-            method="POST"
-            action="/appointment/delete"
-            class="delete-form"
-            onsubmit="return confirm('Delete this cancelled appointment permanently?');"
-          >
-            <input type="hidden" name="appointmentId" value="<%= app._id %>">
-            <button type="submit" class="delete-btn" title="Delete appointment">
-              ❌
-            </button>
-          </form>
-        <% } %>
-
-        <strong>Patient:</strong> <%= app.patientId.name %><br>
-        <strong>Date:</strong> <%= app.date %><br>
-        <strong>Time:</strong> <%= app.time %><br>
-        <strong>Reason:</strong> <%= app.reason %><br>
-
-        <strong>Status:</strong> <%= app.status.toUpperCase() %>
-
-        <% if (app.status === "cancelled" && app.cancelledBy) { %>
-          <span style="color:red;">
-            (Cancelled by <%= app.cancelledBy %>)
+  <div class="dashboard-container">
+    
+    <!-- Header -->
+    <header class="dashboard-header">
+      <div class="header-left">
+        <h1><i class="fas fa-user-md"></i> Doctor Dashboard</h1>
+        <p class="welcome-text">Welcome back, <span class="doctor-name">Dr. <%= doctor.name %></span></p>
+        <div class="header-status">
+          <span class="status-badge active-status">
+            <i class="fas fa-circle"></i> Active
           </span>
-        <% } %>
+          <span class="last-login">
+            <i class="fas fa-clock"></i> Last login: Today
+          </span>
+        </div>
+      </div>
+      
+      <div class="header-right">
+        <a href="/profile" class="btn btn-primary">
+          <i class="fas fa-user-edit"></i> Edit Profile
+        </a>
+        <button class="btn btn-notification" id="notificationBtn">
+          <i class="fas fa-bell"></i>
+          <% if (doctor.pendingPatients.length > 0) { %>
+            <span class="notification-badge"><%= doctor.pendingPatients.length %></span>
+          <% } %>
+        </button>
+      </div>
+    </header>
 
-        <br><br>
+    <!-- Main Content Grid -->
+    <main class="dashboard-grid">
+      
+      <!-- Left Sidebar - Profile & Quick Stats -->
+      <aside class="sidebar">
+        <!-- Profile Card -->
+        <div class="profile-card">
+          <div class="profile-header">
+            <% if (doctor.profilePhoto) { %>
+              <img src="<%= doctor.profilePhoto %>" 
+                   alt="Profile Photo" 
+                   class="profile-photo">
+            <% } else { %>
+              <div class="profile-photo-default">
+                <i class="fas fa-user-md"></i>
+              </div>
+            <% } %>
+            
+            <div class="profile-info">
+              <h3>Dr. <%= doctor.name %></h3>
+              <p class="specialization">
+                <i class="fas fa-stethoscope"></i> <%= doctor.specialization %>
+              </p>
+              <p class="email">
+                <i class="fas fa-envelope"></i> <%= doctor.email %>
+              </p>
+            </div>
+          </div>
+          
+          <div class="profile-stats">
+            <div class="stat-item">
+              <div class="stat-icon">
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value"><%= patients.length %></span>
+                <span class="stat-label">Total Patients</span>
+              </div>
+            </div>
+            
+            <div class="stat-item">
+              <div class="stat-icon">
+                <i class="fas fa-calendar-check"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value"><%= appointments.filter(a => a.status !== 'cancelled' && a.status !== 'completed').length %></span>
+                <span class="stat-label">Active Appointments</span>
+              </div>
+            </div>
+            
+            <div class="stat-item">
+              <div class="stat-icon">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value"><%= doctor.pendingPatients.length %></span>
+                <span class="stat-label">Pending Requests</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="quick-actions">
+            <a href="/profile" class="quick-action-btn">
+              <i class="fas fa-user-cog"></i> Profile Settings
+            </a>
+            <button class="quick-action-btn" onclick="window.location.href='#pending-requests'">
+              <i class="fas fa-user-plus"></i> View Requests
+            </button>
+          </div>
+        </div>
+        
+        <!-- Today's Schedule -->
+        <div class="schedule-card">
+          <h3><i class="fas fa-calendar-day"></i> Today's Overview</h3>
+          <div class="schedule-content">
+            <% 
+              const todayAppointments = appointments.filter(app => {
+                const today = new Date().toISOString().split('T')[0];
+                return app.date === today && app.status !== 'cancelled';
+              });
+            %>
+            
+            <% if (todayAppointments.length > 0) { %>
+              <% todayAppointments.forEach(app => { %>
+                <div class="schedule-item">
+                  <div class="schedule-time">
+                    <i class="fas fa-clock"></i> <%= app.time %>
+                  </div>
+                  <div class="schedule-details">
+                    <span class="schedule-patient"><%= app.patientId.name %></span>
+                    <span class="schedule-reason"><%= app.reason %></span>
+                  </div>
+                  <span class="schedule-status status-<%= app.status %>">
+                    <%= app.status.charAt(0).toUpperCase() + app.status.slice(1) %>
+                  </span>
+                </div>
+              <% }) %>
+            <% } else { %>
+              <div class="empty-schedule">
+                <i class="fas fa-calendar-times"></i>
+                <p>No appointments scheduled for today</p>
+              </div>
+            <% } %>
+          </div>
+        </div>
+      </aside>
 
-        <!-- ❌ Cancel (doctor) -->
-        <% if (app.status !== "cancelled" && app.status !== "completed") { %>
-          <form method="POST" action="/doctor/cancel-appointment">
-            <input type="hidden" name="appointmentId" value="<%= app._id %>">
-            <button type="submit">❌ Cancel Appointment</button>
-          </form>
-        <% } %>
+      <!-- Main Dashboard Content -->
+      <div class="main-content">
+        
+        <!-- Pending Patient Requests Section -->
+        <section class="dashboard-section" id="pending-requests">
+          <div class="section-header">
+            <div class="section-title">
+              <h2><i class="fas fa-user-clock"></i> Pending Patient Requests</h2>
+              <span class="section-count"><%= doctor.pendingPatients.length %></span>
+            </div>
+            <div class="section-actions">
+              <button class="btn btn-outline btn-refresh" onclick="refreshSection('pending-requests')">
+                <i class="fas fa-sync-alt"></i> Refresh
+              </button>
+            </div>
+          </div>
 
-      </li>
+          <% if (doctor.pendingPatients.length === 0) { %>
+            <div class="empty-state">
+              <div class="empty-icon">
+                <i class="fas fa-check-circle"></i>
+              </div>
+              <h3>No Pending Requests</h3>
+              <p>All patient requests have been processed.</p>
+            </div>
+          <% } else { %>
+            <div class="requests-grid">
+              <% doctor.pendingPatients.forEach(patient => { %>
+                <div class="request-card">
+                  <div class="request-header">
+                    <div class="patient-avatar">
+                      <i class="fas fa-user"></i>
+                    </div>
+                    <div class="patient-info">
+                      <h4><%= patient.name %></h4>
+                      <p class="patient-meta">
+                        <% if (patient.age) { %>
+                          <span><i class="fas fa-birthday-cake"></i> <%= patient.age %> years</span>
+                        <% } %>
+                        <% if (patient.contact) { %>
+                          <span><i class="fas fa-phone"></i> <%= patient.contact %></span>
+                        <% } %>
+                      </p>
+                    </div>
+                    <span class="request-time">
+                      <i class="far fa-clock"></i> Just now
+                    </span>
+                  </div>
+                  
+                  <div class="request-actions">
+                    <form method="POST" action="/doctor/approve-patient" class="inline-form">
+                      <input type="hidden" name="patientId" value="<%= patient._id %>">
+                      <button type="submit" class="btn btn-success btn-sm">
+                        <i class="fas fa-check"></i> Approve
+                      </button>
+                    </form>
+                    
+                    <form method="POST" action="/doctor/reject-patient" class="inline-form">
+                      <input type="hidden" name="patientId" value="<%= patient._id %>">
+                      <button type="submit" class="btn btn-danger btn-sm" onclick="return confirmAction('reject', '<%= patient.name %>')">
+                        <i class="fas fa-times"></i> Reject
+                      </button>
+                    </form>
+                    
+                    <button class="btn btn-outline btn-sm" onclick="viewPatientDetails('<%= patient._id %>')">
+                      <i class="fas fa-eye"></i> View Details
+                    </button>
+                  </div>
+                </div>
+              <% }) %>
+            </div>
+          <% } %>
+        </section>
 
-      <hr>
-    <% }) %>
-  </ul>
-<% } %>
+        <!-- My Patients Section -->
+        <section class="dashboard-section">
+          <div class="section-header">
+            <div class="section-title">
+              <h2><i class="fas fa-user-injured"></i> My Patients</h2>
+              <span class="section-count"><%= patients.length %></span>
+            </div>
+            <div class="section-actions">
+              <button class="btn btn-primary btn-sm" onclick="searchPatients()">
+                <i class="fas fa-search"></i> Search
+              </button>
+              <input type="text" class="search-input" placeholder="Search patients..." id="patientSearch">
+            </div>
+          </div>
 
+          <% if (patients.length === 0) { %>
+            <div class="empty-state">
+              <div class="empty-icon">
+                <i class="fas fa-users-slash"></i>
+              </div>
+              <h3>No Patients Yet</h3>
+              <p>Approve pending requests to add patients to your list.</p>
+              <a href="#pending-requests" class="btn btn-primary">
+                <i class="fas fa-user-plus"></i> View Requests
+              </a>
+            </div>
+          <% } else { %>
+            <div class="patients-table-container">
+              <table class="patients-table">
+                <thead>
+                  <tr>
+                    <th>Patient</th>
+                    <th>Age</th>
+                    <th>Contact</th>
+                    <th>Last Visit</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% patients.forEach(patient => { %>
+                    <tr class="patient-row" data-patient-id="<%= patient._id %>">
+                      <td>
+                        <div class="patient-cell">
+                          <div class="patient-avatar-small">
+                            <i class="fas fa-user"></i>
+                          </div>
+                          <div class="patient-details">
+                            <strong><%= patient.name %></strong>
+                            <% if (patient.bloodGroup) { %>
+                              <span class="patient-tag blood-group">Blood: <%= patient.bloodGroup %></span>
+                            <% } %>
+                          </div>
+                        </div>
+                      </td>
+                      <td><%= patient.age || 'N/A' %></td>
+                      <td><%= patient.contact || 'N/A' %></td>
+                      <td>
+                        <span class="last-visit">Recently</span>
+                      </td>
+                      <td>
+                        <div class="action-buttons">
+                          <a href="/doctor/patient/<%= patient._id %>" class="btn btn-secondary btn-xs">
+                            <i class="fas fa-file-medical"></i> Records
+                          </a>
+                          
+                          <button type="button" 
+                                  class="btn btn-primary btn-xs" 
+                                  onclick="toggleMedicalForm('<%= patient._id %>')">
+                            <i class="fas fa-plus"></i> Add Note
+                          </button>
+                          
+                          <form method="POST" 
+                                action="/doctor/remove-patient"
+                                onsubmit="return confirmRemovePatient('<%= patient.name %>')"
+                                class="inline-form">
+                            <input type="hidden" name="patientId" value="<%= patient._id %>">
+                            <button type="submit" class="btn btn-danger btn-xs">
+                              <i class="fas fa-user-minus"></i> Remove
+                            </button>
+                          </form>
+                        </div>
+                      </td>
+                    </tr>
+                    
+                    <!-- Medical Record Form (Hidden) -->
+                    <tr class="medical-form-row" id="medical-form-<%= patient._id %>" style="display: none;">
+                      <td colspan="5">
+                        <div class="medical-form">
+                          <h4><i class="fas fa-file-medical-alt"></i> Add Medical Record for <%= patient.name %></h4>
+                          <form method="POST" action="/doctor/add-history" class="medical-record-form">
+                            <input type="hidden" name="patientId" value="<%= patient._id %>">
+                            
+                            <div class="form-row">
+                              <div class="form-group full-width">
+                                <label><i class="fas fa-comment-medical"></i> Doctor's Advice</label>
+                                <textarea name="advice" class="form-control" required 
+                                          placeholder="Enter medical advice and recommendations..." 
+                                          rows="3"></textarea>
+                              </div>
+                            </div>
+                            
+                            <div class="form-row">
+                              <div class="form-group">
+                                <label><i class="fas fa-pills"></i> Prescribed Medicines</label>
+                                <input type="text" name="medicines" class="form-control" 
+                                       placeholder="Enter medicines separated by commas">
+                              </div>
+                              
+                              <div class="form-group">
+                                <label><i class="fas fa-sticky-note"></i> Additional Notes</label>
+                                <textarea name="notes" class="form-control" 
+                                          placeholder="Any additional observations..." 
+                                          rows="2"></textarea>
+                              </div>
+                            </div>
+                            
+                            <div class="form-actions">
+                              <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> Save Record
+                              </button>
+                              <button type="button" 
+                                      onclick="toggleMedicalForm('<%= patient._id %>')"
+                                      class="btn btn-outline">
+                                <i class="fas fa-times"></i> Cancel
+                              </button>
+                            </div>
+                          </form>
+                        </div>
+                      </td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+            
+            <div class="table-footer">
+              <div class="table-info">
+                Showing <%= patients.length %> patients
+              </div>
+              <div class="table-pagination">
+                <button class="pagination-btn" disabled>
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+                <span class="pagination-current">1</span>
+                <button class="pagination-btn">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+          <% } %>
+        </section>
 
-  <br>
-  <a href="/logout">Logout</a>
-<script>
-  function toggleForm(id) {
-    const form = document.getElementById("history-form-" + id);
-    if (form.style.display === "none") {
-      form.style.display = "block";
-    } else {
-      form.style.display = "none";
+        <!-- Appointments Section -->
+        <section class="dashboard-section">
+          <div class="section-header">
+            <div class="section-title">
+              <h2><i class="fas fa-calendar-alt"></i> Appointments</h2>
+              <span class="section-count"><%= appointments.filter(a => a.status !== 'cancelled' && a.status !== 'completed').length %> upcoming</span>
+            </div>
+            <div class="section-actions">
+              <select class="filter-select" onchange="filterAppointments(this.value)">
+                <option value="all">All Appointments</option>
+                <option value="upcoming">Upcoming</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+          </div>
+
+          <% if (appointments.length === 0) { %>
+            <div class="empty-state">
+              <div class="empty-icon">
+                <i class="fas fa-calendar-times"></i>
+              </div>
+              <h3>No Appointments</h3>
+              <p>No appointments scheduled yet.</p>
+            </div>
+          <% } else { %>
+            <div class="appointments-cards">
+              <% appointments.forEach(app => { %>
+                <div class="appointment-card status-<%= app.status %>">
+                  <% if (app.status === "cancelled") { %>
+                    <div class="appointment-actions-overlay">
+                      <form method="POST"
+                            action="/appointment/delete"
+                            onsubmit="return confirmDeleteAppointment()"
+                            class="delete-form">
+                        <input type="hidden" name="appointmentId" value="<%= app._id %>">
+                        <button type="submit" class="btn-delete-appointment" title="Delete permanently">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </form>
+                    </div>
+                  <% } %>
+
+                  <div class="appointment-header">
+                    <div class="appointment-patient">
+                      <div class="patient-avatar-small">
+                        <i class="fas fa-user"></i>
+                      </div>
+                      <div>
+                        <h4><%= app.patientId.name %></h4>
+                        <p class="appointment-meta">
+                          <i class="fas fa-stethoscope"></i> <%= app.reason %>
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div class="appointment-status">
+                      <span class="status-badge status-<%= app.status %>">
+                        <%= app.status.toUpperCase() %>
+                        <% if (app.status === "cancelled" && app.cancelledBy) { %>
+                          <span class="cancelled-by">(by <%= app.cancelledBy %>)</span>
+                        <% } %>
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="appointment-details">
+                    <div class="detail-item">
+                      <i class="fas fa-calendar"></i>
+                      <span><%= app.date %></span>
+                    </div>
+                    <div class="detail-item">
+                      <i class="fas fa-clock"></i>
+                      <span><%= app.time %></span>
+                    </div>
+                    <div class="detail-item">
+                      <i class="fas fa-file-medical"></i>
+                      <span>Regular Checkup</span>
+                    </div>
+                  </div>
+
+                  <% if (app.status !== "cancelled" && app.status !== "completed") { %>
+                    <div class="appointment-actions">
+                      <form method="POST" action="/doctor/cancel-appointment" class="inline-form">
+                        <input type="hidden" name="appointmentId" value="<%= app._id %>">
+                        <button type="submit" class="btn btn-warning btn-sm" 
+                                onclick="return confirmCancelAppointment()">
+                          <i class="fas fa-times-circle"></i> Cancel Appointment
+                        </button>
+                      </form>
+                      
+                      <% if (app.status === "pending") { %>
+                        <form method="POST" action="/doctor/approve-appointment" class="inline-form">
+                          <input type="hidden" name="appointmentId" value="<%= app._id %>">
+                          <button type="submit" class="btn btn-success btn-sm">
+                            <i class="fas fa-check"></i> Approve
+                          </button>
+                        </form>
+                      <% } else if (app.status === "approved") { %>
+                        <form method="POST" action="/doctor/complete-appointment" class="inline-form">
+                          <input type="hidden" name="appointmentId" value="<%= app._id %>">
+                          <button type="submit" class="btn btn-info btn-sm">
+                            <i class="fas fa-check-double"></i> Mark Complete
+                          </button>
+                        </form>
+                      <% } %>
+                    </div>
+                  <% } %>
+                </div>
+              <% }) %>
+            </div>
+          <% } %>
+        </section>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="dashboard-footer">
+      <div class="footer-content">
+        <div class="footer-links">
+          <a href="/profile"><i class="fas fa-user"></i> Profile</a>
+          <a href="#"><i class="fas fa-question-circle"></i> Help</a>
+          <a href="#"><i class="fas fa-cog"></i> Settings</a>
+        </div>
+        
+        <div class="footer-info">
+          <a href="/logout" class="btn btn-outline btn-logout">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </a>
+          <p class="footer-copyright">
+            HealthCare+ Doctor Dashboard © <%= new Date().getFullYear() %>
+          </p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    // Loading overlay
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(() => {
+        document.getElementById('loadingOverlay').style.display = 'none';
+      }, 500);
+    });
+
+    // Toggle medical form
+    function toggleMedicalForm(patientId) {
+      const formRow = document.getElementById(`medical-form-${patientId}`);
+      const isVisible = formRow.style.display !== 'none';
+      
+      // Hide all other forms first
+      document.querySelectorAll('.medical-form-row').forEach(row => {
+        row.style.display = 'none';
+      });
+      
+      // Toggle current form
+      formRow.style.display = isVisible ? 'none' : 'table-row';
+      
+      // Scroll to form if showing
+      if (!isVisible) {
+        formRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
     }
-  }
-</script>
+
+    // Confirmation dialogs
+    function confirmRemovePatient(patientName) {
+      return confirm(`Are you sure you want to remove ${patientName} from your patient list?`);
+    }
+
+    function confirmAction(action, patientName) {
+      if (action === 'reject') {
+        return confirm(`Are you sure you want to reject ${patientName}'s request?`);
+      }
+      return true;
+    }
+
+    function confirmCancelAppointment() {
+      return confirm('Are you sure you want to cancel this appointment?');
+    }
+
+    function confirmDeleteAppointment() {
+      return confirm('Delete this cancelled appointment permanently? This action cannot be undone.');
+    }
+
+    // Search functionality
+    function searchPatients() {
+      const searchInput = document.getElementById('patientSearch');
+      searchInput.style.display = searchInput.style.display === 'none' ? 'block' : 'none';
+      if (searchInput.style.display === 'block') {
+        searchInput.focus();
+      }
+    }
+
+    document.getElementById('patientSearch')?.addEventListener('input', function(e) {
+      const searchTerm = e.target.value.toLowerCase();
+      document.querySelectorAll('.patient-row').forEach(row => {
+        const patientName = row.querySelector('strong').textContent.toLowerCase();
+        row.style.display = patientName.includes(searchTerm) ? '' : 'none';
+      });
+    });
+
+    // View patient details (placeholder - can be expanded)
+    function viewPatientDetails(patientId) {
+      // This would typically open a modal or navigate to patient details
+      alert(`Viewing patient details for ID: ${patientId}`);
+    }
+
+    // Refresh section
+    function refreshSection(sectionId) {
+      const section = document.getElementById(sectionId);
+      const refreshBtn = section.querySelector('.btn-refresh');
+      
+      refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+      refreshBtn.disabled = true;
+      
+      setTimeout(() => {
+        location.reload();
+      }, 1000);
+    }
+
+    // Filter appointments
+    function filterAppointments(filter) {
+      document.querySelectorAll('.appointment-card').forEach(card => {
+        const status = card.classList[1].replace('status-', '');
+        
+        if (filter === 'all' || filter === status) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // Notification bell click
+    document.getElementById('notificationBtn')?.addEventListener('click', function() {
+      window.location.href = '#pending-requests';
+      const pendingSection = document.getElementById('pending-requests');
+      pendingSection.scrollIntoView({ behavior: 'smooth' });
+      
+      // Add highlight animation
+      pendingSection.style.animation = 'highlight 2s ease';
+      setTimeout(() => {
+        pendingSection.style.animation = '';
+      }, 2000);
+    });
+
+    // Add keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+      // Escape key closes all medical forms
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.medical-form-row').forEach(row => {
+          row.style.display = 'none';
+        });
+      }
+      
+      // Ctrl + F to search patients
+      if (e.ctrlKey && e.key === 'f') {
+        e.preventDefault();
+        searchPatients();
+      }
+      
+      // Ctrl + R to refresh
+      if (e.ctrlKey && e.key === 'r') {
+        e.preventDefault();
+        location.reload();
+      }
+    });
+
+    // Add highlight animation style
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes highlight {
+        0% { background-color: transparent; }
+        50% { background-color: rgba(76, 175, 80, 0.1); }
+        100% { background-color: transparent; }
+      }
+      
+      @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+      }
+      
+      .notification-badge {
+        animation: pulse 2s infinite;
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
 
 </body>
 </html>

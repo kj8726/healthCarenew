@@ -1,44 +1,395 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Complete Patient Profile</title>
-  <link rel="stylesheet" href="/css/complete-profile-patient.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complete Patient Profile | HealthCare+</title>
+  <link rel="stylesheet" href="/css/complete-profile-patient.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" type="image/x-icon" href="/images/medical-icon.png">
 </head>
 <body>
 
-  <div class="profile-container">
-    <h2>Patient Profile</h2>
-    <p class="subtitle">Help doctors understand your health better</p>
+  <div class="page">
+    
+    <!-- Progress Indicator -->
+    <div class="progress-indicator">
+      <div class="progress-step completed">
+        <i class="fas fa-check"></i>
+      </div>
+      <div class="progress-step completed">
+        <i class="fas fa-check"></i>
+      </div>
+      <div class="progress-step active">
+        3
+      </div>
+    </div>
 
-    <form method="POST" action="/complete-profile">
-
-      <div class="field">
-        <label>Contact Number</label>
-        <input type="text" name="contact" required />
+    <div class="profile-card">
+      <!-- Header -->
+      <div class="header">
+        <h2><i class="fas fa-user-injured"></i> Complete Your Health Profile</h2>
+        <p>Help healthcare providers understand your medical history and provide better care</p>
       </div>
 
-      <div class="field">
-        <label>Age</label>
-        <input type="number" name="age" required />
+      <!-- Main Form -->
+      <form method="POST" action="/complete-profile" id="patientProfileForm" class="form-container">
+        
+        <!-- Personal Information Section -->
+        <div class="section-header">
+          <h3><i class="fas fa-user"></i> Personal Information</h3>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="contact" class="required">
+              <i class="fas fa-phone"></i> Contact Number
+            </label>
+            <input type="tel" 
+                   id="contact"
+                   name="contact" 
+                   placeholder="Enter 10-digit mobile number"
+                   pattern="[0-9]{10}"
+                   title="Please enter a valid 10-digit mobile number"
+                   required>
+            <span class="field-hint">Doctors may contact you for appointments</span>
+          </div>
+
+          <div class="form-group">
+            <label for="age" class="required">
+              <i class="fas fa-birthday-cake"></i> Age
+            </label>
+            <input type="number" 
+                   id="age"
+                   name="age" 
+                   placeholder="Enter your age"
+                   min="0"
+                   max="120"
+                   required>
+            <span class="field-hint">Important for medical assessment</span>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="address" class="required">
+              <i class="fas fa-map-marker-alt"></i> Address
+            </label>
+            <textarea id="address"
+                      name="address" 
+                      placeholder="Enter your complete address including city, state, and pin code"
+                      rows="3"
+                      required></textarea>
+            <span class="field-hint">For emergency services and home visits</span>
+          </div>
+        </div>
+
+        <!-- Health Information Section -->
+        <div class="section-header">
+          <h3><i class="fas fa-heartbeat"></i> Health Information</h3>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label for="medicalConditions">
+              <i class="fas fa-file-medical"></i> Medical Conditions
+            </label>
+            <input type="text" 
+                   id="medicalConditions"
+                   name="medicalConditions" 
+                   value="<%= user.medicalConditions ? user.medicalConditions.join(', ') : '' %>"
+                   placeholder="e.g., Diabetes, Hypertension, Asthma, Arthritis"
+                   class="conditions-input">
+            <span class="field-hint">Separate multiple conditions with commas</span>
+          </div>
+
+          <div class="form-group">
+            <label for="bloodGroup">
+              <i class="fas fa-tint"></i> Blood Group
+            </label>
+            <select id="bloodGroup" name="bloodGroup" class="form-select">
+              <option value="">Select Blood Group</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+            </select>
+            <span class="field-hint">Important for emergencies</span>
+          </div>
+
+          <div class="form-group">
+            <label for="height">
+              <i class="fas fa-ruler-vertical"></i> Height (cm)
+            </label>
+            <input type="number" 
+                   id="height"
+                   name="height" 
+                   placeholder="Height in centimeters"
+                   min="50"
+                   max="250">
+          </div>
+
+          <div class="form-group">
+            <label for="weight">
+              <i class="fas fa-weight"></i> Weight (kg)
+            </label>
+            <input type="number" 
+                   id="weight"
+                   name="weight" 
+                   placeholder="Weight in kilograms"
+                   min="10"
+                   max="300">
+          </div>
+
+          <div class="form-group full-width">
+            <label for="allergies">
+              <i class="fas fa-allergies"></i> Allergies
+            </label>
+            <input type="text" 
+                   id="allergies"
+                   name="allergies" 
+                   placeholder="e.g., Penicillin, Pollen, Peanuts, Latex">
+            <span class="field-hint">List any known allergies</span>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="emergencyContact">
+              <i class="fas fa-phone-alt"></i> Emergency Contact
+            </label>
+            <input type="tel" 
+                   id="emergencyContact"
+                   name="emergencyContact" 
+                   placeholder="Emergency contact number"
+                   pattern="[0-9]{10}">
+            <span class="field-hint">10-digit emergency contact number</span>
+          </div>
+        </div>
+
+        <!-- Additional Information -->
+        <div class="section-header">
+          <h3><i class="fas fa-info-circle"></i> Additional Information</h3>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label for="currentMedications">
+              <i class="fas fa-pills"></i> Current Medications
+            </label>
+            <textarea id="currentMedications"
+                      name="currentMedications"
+                      placeholder="List any medications you're currently taking with dosages"
+                      rows="3"></textarea>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="surgeryHistory">
+              <i class="fas fa-procedures"></i> Surgery History
+            </label>
+            <textarea id="surgeryHistory"
+                      name="surgeryHistory"
+                      placeholder="List any past surgeries with dates"
+                      rows="3"></textarea>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="familyHistory">
+              <i class="fas fa-users"></i> Family Medical History
+            </label>
+            <textarea id="familyHistory"
+                      name="familyHistory"
+                      placeholder="Any hereditary conditions in family (e.g., diabetes, heart disease)"
+                      rows="3"></textarea>
+          </div>
+        </div>
+
+        <!-- Hidden field for profile photo (if you want to add later) -->
+        <input type="hidden" name="profilePhoto" value="<%= user.profilePhoto || '' %>">
+
+        <!-- Submit Button -->
+        <button type="submit" class="save-btn" id="saveBtn">
+          <i class="fas fa-check-circle"></i> Complete Profile & Continue
+        </button>
+
+      </form>
+
+      <!-- Information Panel -->
+      <div class="info-panel">
+        <h3><i class="fas fa-lightbulb"></i> Why This Information Matters</h3>
+        <p><strong>Better Healthcare:</strong> Complete profiles help doctors provide personalized care.</p>
+        <p><strong>Emergency Preparedness:</strong> Critical information available during emergencies.</p>
+        <p><strong>Accurate Diagnosis:</strong> Medical history helps in accurate diagnosis.</p>
+        <ul>
+          <li>Your information is confidential and secure</li>
+          <li>You can update this anytime from your profile</li>
+          <li>Sharing complete information leads to better treatment</li>
+        </ul>
       </div>
 
-      <div class="field">
-        <label>Address</label>
-        <textarea name="address" required></textarea>
-      </div>
+    </div>
 
-      <div class="field">
-        <label>Medical Conditions (comma separated)</label>
-        <input type="text" name="medicalConditions" placeholder="Diabetes, BP, Asthma" />
-      </div>
+    <!-- Footer Note -->
+    <div style="text-align: center; margin-top: 30px; color: var(--text-light); font-size: 0.9rem;">
+      <p><i class="fas fa-shield-alt"></i> Your health data is protected with HIPAA-compliant encryption</p>
+    </div>
 
-      <button type="submit" class="primary-btn">
-        Save Profile
-      </button>
-
-    </form>
   </div>
+
+  <script>
+    // Form validation and enhancement
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('patientProfileForm');
+      const saveBtn = document.getElementById('saveBtn');
+      
+      // Real-time validation feedback
+      const inputs = form.querySelectorAll('input[required], textarea[required]');
+      inputs.forEach(input => {
+        input.addEventListener('input', function() {
+          validateField(this);
+        });
+        
+        input.addEventListener('blur', function() {
+          validateField(this);
+        });
+      });
+      
+      function validateField(field) {
+        const hint = field.nextElementSibling;
+        
+        // Reset field classes
+        field.classList.remove('valid', 'invalid');
+        
+        if (field.value.trim() === '') {
+          if (field.hasAttribute('required')) {
+            field.classList.add('invalid');
+            if (hint && hint.classList.contains('field-hint')) {
+              hint.style.color = '#f44336';
+            }
+          }
+          return;
+        }
+        
+        // Type-specific validation
+        let isValid = true;
+        
+        if (field.type === 'tel') {
+          isValid = /^[0-9]{10}$/.test(field.value);
+        } else if (field.type === 'number') {
+          const min = parseInt(field.getAttribute('min')) || 0;
+          const max = parseInt(field.getAttribute('max')) || Infinity;
+          const value = parseInt(field.value);
+          isValid = !isNaN(value) && value >= min && value <= max;
+        }
+        
+        field.classList.add(isValid ? 'valid' : 'invalid');
+        
+        // Update hint message
+        if (hint && hint.classList.contains('field-hint')) {
+          hint.style.color = isValid ? 'var(--primary-green)' : '#f44336';
+        }
+      }
+      
+      // Form submission handling
+      form.addEventListener('submit', function(e) {
+        let isValid = true;
+        const requiredFields = form.querySelectorAll('[required]');
+        
+        // Validate all required fields
+        requiredFields.forEach(field => {
+          validateField(field);
+          if (field.classList.contains('invalid')) {
+            isValid = false;
+            
+            // Add shake animation
+            field.style.animation = 'shake 0.5s ease-in-out';
+            setTimeout(() => {
+              field.style.animation = '';
+            }, 500);
+          }
+        });
+        
+        if (!isValid) {
+          e.preventDefault();
+          
+          // Show error message
+          const errorDiv = document.createElement('div');
+          errorDiv.style.cssText = `
+            background: #fee;
+            color: #c00;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid #f44336;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideInUp 0.4s ease-out;
+          `;
+          errorDiv.innerHTML = `
+            <i class="fas fa-exclamation-circle"></i>
+            <div>
+              <strong>Please complete all required fields correctly.</strong>
+              <div style="font-size: 0.9rem; margin-top: 5px;">
+                Fields marked with * are required.
+              </div>
+            </div>
+          `;
+          
+          const existingError = form.querySelector('[style*="background: #fee"]');
+          if (existingError) {
+            existingError.replaceWith(errorDiv);
+          } else {
+            form.insertBefore(errorDiv, form.firstChild);
+          }
+          
+          // Scroll to first error
+          const firstInvalid = form.querySelector('.invalid');
+          if (firstInvalid) {
+            firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+          
+          return false;
+        }
+        
+        // Show loading state
+        saveBtn.classList.add('loading');
+        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving Profile...';
+        saveBtn.disabled = true;
+        
+        // The form will submit normally
+      });
+      
+      // Add shake animation style
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+          20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        @keyframes slideInUp {
+          from {
+            opacity: 0;
+            transform: translateY(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `;
+      document.head.appendChild(style);
+      
+      // Initialize validation on page load
+      inputs.forEach(input => {
+        if (input.value.trim() !== '') {
+          validateField(input);
+        }
+      });
+    });
+  </script>
 
 </body>
 </html>

@@ -2,60 +2,393 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Complete Doctor Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complete Doctor Profile | HealthCare+</title>
   <link rel="stylesheet" href="/css/complete-profile-doctor.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" type="image/x-icon" href="/images/medical-icon.png">
 </head>
 
 <body>
   <div class="page">
+    
+    <!-- Progress Indicator -->
+    <div class="progress-indicator">
+      <div class="progress-step completed">
+        <i class="fas fa-check"></i>
+      </div>
+      <div class="progress-step completed">
+        <i class="fas fa-check"></i>
+      </div>
+      <div class="progress-step active">
+        3
+      </div>
+    </div>
 
     <div class="profile-card">
+      <!-- Header -->
       <div class="header">
-        <h2>👨‍⚕️ Doctor Profile</h2>
-        <p>Complete your professional details</p>
+        <h2>Complete Your Professional Profile</h2>
+        <p>Please complete your details to provide better healthcare services and build trust with patients</p>
       </div>
 
-      <form method="POST" action="/complete-profile">
-
-        <div class="form-group">
-          <label>Contact Number</label>
-          <input type="text" name="contact" placeholder="Enter contact number" required>
+      <!-- Main Form -->
+      <form method="POST" action="/complete-profile" id="doctorProfileForm" class="form-container">
+        
+        <!-- Personal Information Section -->
+        <div class="section-header">
+          <h3><i class="fas fa-user"></i> Personal Information</h3>
         </div>
 
-        <div class="form-group">
-          <label>Age</label>
-          <input type="number" name="age" placeholder="Enter age" required>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="contact" class="required">
+              <i class="fas fa-phone"></i> Contact Number
+            </label>
+            <input type="tel" 
+                   id="contact"
+                   name="contact" 
+                   placeholder="Enter 10-digit mobile number"
+                   pattern="[0-9]{10}"
+                   title="Please enter a valid 10-digit mobile number"
+                   required>
+            <span class="field-hint">Patients will contact you on this number</span>
+          </div>
+
+          <div class="form-group">
+            <label for="age" class="required">
+              <i class="fas fa-birthday-cake"></i> Age
+            </label>
+            <input type="number" 
+                   id="age"
+                   name="age" 
+                   placeholder="Enter your age"
+                   min="25"
+                   max="80"
+                   required>
+            <span class="field-hint">Must be between 25 and 80 years</span>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="address" class="required">
+              <i class="fas fa-map-marker-alt"></i> Clinic Address
+            </label>
+            <textarea id="address"
+                      name="address" 
+                      placeholder="Enter complete clinic address including city, state, and pin code"
+                      rows="3"
+                      required></textarea>
+            <span class="field-hint">This will be shown to patients for appointment location</span>
+          </div>
         </div>
 
-        <div class="form-group">
-          <label>Address</label>
-          <textarea name="address" placeholder="Enter address" required></textarea>
+        <!-- Professional Information Section -->
+        <div class="section-header">
+          <h3><i class="fas fa-user-md"></i> Professional Details</h3>
         </div>
 
-        <div class="form-group">
-          <label>Specialization</label>
-          <input type="text" name="specialization" placeholder="e.g. Cardiologist" required>
-        </div>
-        <div class="form-group">
-          <label>Experience</label>
-          <input type="number" name="experience" placeholder="e.g. 5 " required>
-        </div>
-        <div class="form-group">
-          <label>About</label>
-          <input type="text" name="about" placeholder="you can add timing and other details " required>
-        </div>
-        <div class="form-group">
-          <label>Degree</label>
-          <input type="text" name="degree" placeholder="e.g. MBBS with some speacialization " required>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="specialization" class="required">
+              <i class="fas fa-stethoscope"></i> Specialization
+            </label>
+            <select id="specialization" name="specialization" required>
+              <option value="">Select Specialization</option>
+              <option value="Cardiologist">Cardiologist</option>
+              <option value="Neurologist">Neurologist</option>
+              <option value="Orthopedist">Orthopedist</option>
+              <option value="Pediatrician">Pediatrician</option>
+              <option value="Dermatologist">Dermatologist</option>
+              <option value="Gynecologist">Gynecologist</option>
+              <option value="Psychiatrist">Psychiatrist</option>
+              <option value="Dentist">Dentist</option>
+              <option value="General Physician">General Physician</option>
+              <option value="Other">Other (Specify in About)</option>
+            </select>
+            <span class="field-hint">Your medical specialization field</span>
+          </div>
+
+          <div class="form-group">
+            <label for="experience" class="required">
+              <i class="fas fa-briefcase"></i> Experience (Years)
+            </label>
+            <input type="number" 
+                   id="experience"
+                   name="experience" 
+                   placeholder="e.g., 5 years"
+                   min="0"
+                   max="60"
+                   required>
+            <span class="field-hint">Total years of medical practice</span>
+          </div>
+
+          <div class="form-group">
+            <label for="degree" class="required">
+              <i class="fas fa-graduation-cap"></i> Medical Degree
+            </label>
+            <select id="degree" name="degree" required>
+              <option value="">Select Highest Degree</option>
+              <option value="MBBS">MBBS</option>
+              <option value="MD">MD</option>
+              <option value="MS">MS</option>
+              <option value="BDS">BDS</option>
+              <option value="MDS">MDS</option>
+              <option value="BAMS">BAMS</option>
+              <option value="BHMS">BHMS</option>
+              <option value="Other">Other</option>
+            </select>
+            <span class="field-hint">Your highest medical qualification</span>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="about" class="required">
+              <i class="fas fa-file-medical-alt"></i> About & Consultation Details
+            </label>
+            <textarea id="about"
+                      name="about" 
+                      placeholder="Describe your expertise, consultation hours, fees, languages spoken, and any other relevant information for patients"
+                      rows="4"
+                      maxlength="1000"
+                      required></textarea>
+            <span class="field-hint">This information will help patients understand your practice</span>
+            <div class="char-counter" id="aboutCounter">0/1000 characters</div>
+          </div>
+
+          <!-- Hidden field for profile photo (if you want to add later) -->
+          <input type="hidden" name="profilePhoto" value="">
         </div>
 
-        <button type="submit" class="save-btn">
-          Save Profile
+        <!-- Submit Button -->
+        <button type="submit" class="save-btn" id="saveBtn">
+          <i class="fas fa-check-circle"></i> Complete Profile & Continue
         </button>
 
       </form>
+
+      <!-- Information Panel -->
+      <div class="info-panel">
+        <h3><i class="fas fa-lightbulb"></i> Important Information</h3>
+        <p><strong>Profile Verification:</strong> Your profile will be verified within 24-48 hours after submission.</p>
+        <p><strong>Patient Trust:</strong> Complete and detailed profiles receive significantly more appointment requests.</p>
+        <p><strong>Data Accuracy:</strong> Ensure all information is accurate and up-to-date for the best patient experience.</p>
+        <ul>
+          <li>You can update this information anytime from your profile</li>
+          <li>Incomplete profiles may limit access to some platform features</li>
+          <li>Your contact information is kept private and secure</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Footer Note -->
+    <div style="text-align: center; margin-top: 30px; color: var(--text-light); font-size: 0.9rem;">
+      <p><i class="fas fa-shield-alt"></i> Your information is secured with 256-bit encryption</p>
     </div>
 
   </div>
+
+  <script>
+    // Form validation and enhancement
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('doctorProfileForm');
+      const saveBtn = document.getElementById('saveBtn');
+      const aboutTextarea = document.getElementById('about');
+      const aboutCounter = document.getElementById('aboutCounter');
+      
+      // Initialize character counter
+      if (aboutTextarea && aboutCounter) {
+        aboutCounter.textContent = `${aboutTextarea.value.length}/1000 characters`;
+        
+        aboutTextarea.addEventListener('input', function() {
+          const length = this.value.length;
+          aboutCounter.textContent = `${length}/1000 characters`;
+          
+          // Update counter color based on length
+          aboutCounter.className = 'char-counter';
+          if (length > 950) {
+            aboutCounter.classList.add('danger');
+          } else if (length > 800) {
+            aboutCounter.classList.add('warning');
+          }
+        });
+      }
+      
+      // Real-time validation feedback
+      const inputs = form.querySelectorAll('input, textarea, select');
+      inputs.forEach(input => {
+        input.addEventListener('input', function() {
+          validateField(this);
+        });
+        
+        input.addEventListener('blur', function() {
+          validateField(this);
+        });
+        
+        // Add focus effect
+        input.addEventListener('focus', function() {
+          this.parentElement.style.transform = 'translateY(-5px)';
+        });
+        
+        input.addEventListener('blur', function() {
+          this.parentElement.style.transform = '';
+        });
+      });
+      
+      function validateField(field) {
+        const hint = field.nextElementSibling;
+        
+        // Reset field classes
+        field.classList.remove('valid', 'invalid');
+        
+        if (field.value.trim() === '') {
+          if (field.hasAttribute('required')) {
+            field.classList.add('invalid');
+            if (hint && hint.classList.contains('field-hint')) {
+              hint.style.color = '#f44336';
+              hint.textContent = hint.textContent.replace('✓ ', '') + ' (Required)';
+            }
+          }
+          return;
+        }
+        
+        // Type-specific validation
+        let isValid = true;
+        let message = '';
+        
+        switch(field.type) {
+          case 'tel':
+            isValid = /^[0-9]{10}$/.test(field.value);
+            message = isValid ? '✓ Valid phone number' : 'Please enter 10 digits';
+            break;
+          case 'number':
+            const min = parseInt(field.getAttribute('min')) || 0;
+            const max = parseInt(field.getAttribute('max')) || Infinity;
+            const value = parseInt(field.value);
+            isValid = !isNaN(value) && value >= min && value <= max;
+            message = isValid ? '✓ Valid' : `Must be between ${min} and ${max}`;
+            break;
+        }
+        
+        if (field.tagName === 'SELECT' && field.value === '') {
+          isValid = false;
+          message = 'Please select an option';
+        }
+        
+        field.classList.add(isValid ? 'valid' : 'invalid');
+        
+        // Update hint message
+        if (hint && hint.classList.contains('field-hint')) {
+          const originalText = hint.textContent.replace(/^✓\s*/, '').replace(/\s*\(.*\)$/, '');
+          if (isValid) {
+            hint.style.color = 'var(--primary-green)';
+            hint.textContent = '✓ ' + originalText;
+          } else {
+            hint.style.color = '#f44336';
+            hint.textContent = originalText + ' (' + message + ')';
+          }
+        }
+      }
+      
+      // Form submission handling
+      form.addEventListener('submit', function(e) {
+        let isValid = true;
+        const requiredFields = form.querySelectorAll('[required]');
+        
+        // Validate all required fields
+        requiredFields.forEach(field => {
+          validateField(field);
+          if (field.classList.contains('invalid')) {
+            isValid = false;
+            
+            // Add shake animation
+            field.style.animation = 'shake 0.5s ease-in-out';
+            setTimeout(() => {
+              field.style.animation = '';
+            }, 500);
+          }
+        });
+        
+        if (!isValid) {
+          e.preventDefault();
+          
+          // Show error message
+          const errorDiv = document.createElement('div');
+          errorDiv.style.cssText = `
+            background: #fee;
+            color: #c00;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid #f44336;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideInUp 0.4s ease-out;
+          `;
+          errorDiv.innerHTML = `
+            <i class="fas fa-exclamation-circle"></i>
+            <div>
+              <strong>Please complete all required fields correctly.</strong>
+              <div style="font-size: 0.9rem; margin-top: 5px;">
+                Fields marked with * are required.
+              </div>
+            </div>
+          `;
+          
+          const existingError = form.querySelector('[style*="background: #fee"]');
+          if (existingError) {
+            existingError.replaceWith(errorDiv);
+          } else {
+            form.insertBefore(errorDiv, form.firstChild);
+          }
+          
+          // Scroll to first error
+          const firstInvalid = form.querySelector('.invalid');
+          if (firstInvalid) {
+            firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+          
+          return false;
+        }
+        
+        // Show loading state
+        saveBtn.classList.add('loading');
+        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving Profile...';
+        saveBtn.disabled = true;
+        
+        // The form will submit normally
+      });
+      
+      // Add shake animation style
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+          20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        @keyframes slideInUp {
+          from {
+            opacity: 0;
+            transform: translateY(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `;
+      document.head.appendChild(style);
+      
+      // Initialize validation on page load
+      inputs.forEach(input => {
+        if (input.value.trim() !== '') {
+          validateField(input);
+        }
+      });
+    });
+  </script>
+
 </body>
 </html>

@@ -1,30 +1,228 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Edit Medical History</title>
-  <link rel="stylesheet" href="/css/edit.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Medical Record</title>
+    <link rel="stylesheet" href="/css/edit.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header-section">
+            <div class="header-content">
+                <h1><i class="fas fa-edit"></i> Edit Medical Record</h1>
+                <div class="record-info">
+                    <div class="info-badge">
+                        <i class="fas fa-calendar"></i>
+                        <%= new Date(record.createdAt).toLocaleDateString('en-US', { 
+                            weekday: 'long', 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric' 
+                        }) %>
+                    </div>
+                    <div class="info-badge">
+                        <i class="fas fa-user-injured"></i>
+                        Patient ID: <%= record.patientId.toString().substring(0, 8) %>...
+                    </div>
+                </div>
+            </div>
+        </div>
 
-  <h1>Edit Medical Record</h1>
+        <!-- Main Form Section -->
+        <div class="form-section">
+            <div class="form-card">
+                <div class="form-header">
+                    <h2><i class="fas fa-file-medical-alt"></i> Update Medical Information</h2>
+                    <p class="form-subtitle">Edit the medical record details below</p>
+                </div>
 
-  <form method="POST" action="/doctor/edit-history/<%= record._id %>">
+                <form method="POST" action="/doctor/edit-history/<%= record._id %>" class="medical-form">
+                    <!-- Doctor Advice Field -->
+                    <div class="form-group">
+                        <div class="form-label-section">
+                            <label for="advice" class="form-label">
+                                <i class="fas fa-comment-medical"></i> Doctor's Advice
+                            </label>
+                            <span class="required-badge">Required</span>
+                        </div>
+                        <div class="form-input-section">
+                            <textarea 
+                                id="advice" 
+                                name="advice" 
+                                class="form-textarea advice-field" 
+                                rows="6" 
+                                placeholder="Enter medical advice, treatment plan, or recommendations..."
+                                required><%= record.advice %></textarea>
+                            <div class="field-helper">
+                                <i class="fas fa-info-circle"></i>
+                                Provide clear medical advice for the patient
+                            </div>
+                        </div>
+                    </div>
 
-    <label>Doctor Advice:</label><br>
-    <textarea name="advice" required><%= record.advice %></textarea><br><br>
+                    <!-- Medicines Field -->
+                    <div class="form-group">
+                        <div class="form-label-section">
+                            <label for="medicines" class="form-label">
+                                <i class="fas fa-pills"></i> Prescribed Medicines
+                            </label>
+                            <span class="optional-badge">Comma separated</span>
+                        </div>
+                        <div class="form-input-section">
+                            <div class="input-with-icon">
+                                <i class="fas fa-prescription-bottle-alt input-icon"></i>
+                                <input 
+                                    type="text" 
+                                    id="medicines" 
+                                    name="medicines" 
+                                    class="form-input medicine-input" 
+                                    placeholder="e.g., Paracetamol 500mg, Ibuprofen 200mg, Vitamin C"
+                                    value="<%= record.medicines.join(', ') %>">
+                            </div>
+                            <div class="field-helper">
+                                <i class="fas fa-lightbulb"></i>
+                                Separate multiple medicines with commas
+                            </div>
+                            <% if (record.medicines && record.medicines.length > 0) { %>
+                                <div class="current-medicines">
+                                    <h4><i class="fas fa-list-check"></i> Current Medicines:</h4>
+                                    <div class="medicine-tags">
+                                        <% record.medicines.forEach(medicine => { %>
+                                            <% if (medicine.trim()) { %>
+                                                <span class="medicine-tag">
+                                                    <i class="fas fa-capsules"></i>
+                                                    <%= medicine.trim() %>
+                                                </span>
+                                            <% } %>
+                                        <% }) %>
+                                    </div>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
 
-    <label>Medicines (comma separated):</label><br>
-    <input type="text" name="medicines"
-      value="<%= record.medicines.join(', ') %>"><br><br>
+                    <!-- Notes Field -->
+                    <div class="form-group">
+                        <div class="form-label-section">
+                            <label for="notes" class="form-label">
+                                <i class="fas fa-sticky-note"></i> Additional Notes
+                            </label>
+                            <span class="optional-badge">Optional</span>
+                        </div>
+                        <div class="form-input-section">
+                            <textarea 
+                                id="notes" 
+                                name="notes" 
+                                class="form-textarea notes-field" 
+                                rows="4" 
+                                placeholder="Add any additional observations, follow-up instructions, or special notes..."><%= record.notes || '' %></textarea>
+                            <div class="field-helper">
+                                <i class="fas fa-pencil-alt"></i>
+                                Optional field for supplementary information
+                            </div>
+                        </div>
+                    </div>
 
-    <label>Notes:</label><br>
-    <textarea name="notes"><%= record.notes || '' %></textarea><br><br>
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <div class="action-buttons">
+                            <button type="submit" class="btn btn-primary btn-update">
+                                <i class="fas fa-save"></i> Update Medical Record
+                            </button>
+                            <a href="/doctor/patient/<%= record.patientId %>" class="btn btn-secondary btn-cancel">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        </div>
+                        <div class="form-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>Updating this record will modify the patient's permanent medical history</span>
+                        </div>
+                    </div>
+                </form>
 
-    <button type="submit">Update Record</button>
-  </form>
+                <!-- Quick Navigation -->
+                <div class="quick-nav">
+                    <h3><i class="fas fa-compass"></i> Quick Navigation</h3>
+                    <div class="nav-links">
+                        <a href="/doctor/patient/<%= record.patientId %>" class="nav-link">
+                            <i class="fas fa-arrow-left"></i> Back to Patient History
+                        </a>
+                        <a href="/dashboard" class="nav-link">
+                            <i class="fas fa-home"></i> Return to Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
 
-  <br>
-  <a href="/doctor/patient/<%= record.patientId %>">⬅ Back</a>
+            <!-- Information Sidebar -->
+            <div class="info-sidebar">
+                <div class="sidebar-card">
+                    <div class="sidebar-header">
+                        <h3><i class="fas fa-lightbulb"></i> Editing Guidelines</h3>
+                    </div>
+                    <div class="sidebar-content">
+                        <div class="guideline-item">
+                            <div class="guideline-icon">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                            <div class="guideline-text">
+                                <h4>Professional Advice</h4>
+                                <p>Ensure medical advice is clear, actionable, and appropriate for the patient's condition.</p>
+                            </div>
+                        </div>
+                        <div class="guideline-item">
+                            <div class="guideline-icon">
+                                <i class="fas fa-prescription-bottle"></i>
+                            </div>
+                            <div class="guideline-text">
+                                <h4>Medicine Format</h4>
+                                <p>Include dosage and frequency when specifying medications (e.g., "500mg twice daily").</p>
+                            </div>
+                        </div>
+                        <div class="guideline-item">
+                            <div class="guideline-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="guideline-text">
+                                <h4>Data Integrity</h4>
+                                <p>Medical records are permanent. Review changes carefully before updating.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
+                <div class="sidebar-card">
+                    <div class="sidebar-header">
+                        <h3><i class="fas fa-history"></i> Original Record</h3>
+                    </div>
+                    <div class="sidebar-content">
+                        <div class="original-info">
+                            <div class="info-item">
+                                <span class="info-label">Created:</span>
+                                <span class="info-value"><%= new Date(record.createdAt).toLocaleDateString() %></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Last Updated:</span>
+                                <span class="info-value">
+                                    <% if (record.updatedAt && record.updatedAt !== record.createdAt) { %>
+                                        <%= new Date(record.updatedAt).toLocaleDateString() %>
+                                    <% } else { %>
+                                        <em>Never updated</em>
+                                    <% } %>
+                                </span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Medicines Count:</span>
+                                <span class="info-value"><%= record.medicines.length %></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

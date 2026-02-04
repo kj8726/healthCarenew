@@ -1,32 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Choose Role</title>
-  <link rel="stylesheet" href="/css/role.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Choose Your Role | HealthCare+</title>
+  <link rel="stylesheet" href="/css/role.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" type="image/x-icon" href="/images/medical-icon.png">
 </head>
 <body>
 
   <div class="role-container">
-    <h2>Select Your Role</h2>
-    <p class="subtitle">Tell us who you are to personalize your experience</p>
+    
+    <!-- Progress Indicator -->
+    <div class="progress-indicator">
+      <div class="progress-step completed">
+        <i class="fas fa-check"></i>
+      </div>
+      <div class="progress-step active">
+        2
+      </div>
+      <div class="progress-step">
+        3
+      </div>
+    </div>
 
+    <!-- Header -->
+    <div class="role-header">
+      <h2>Select Your Role</h2>
+      <p class="role-subtitle">Tell us who you are to personalize your healthcare experience. Your choice will determine the features and tools available to you.</p>
+    </div>
+
+    <!-- Main Form -->
     <form method="POST" action="/choose-role" class="role-form">
 
+      <!-- Doctor Option -->
       <button type="submit" name="role" value="doctor" class="role-card doctor">
-        <span class="icon">👨‍⚕️</span>
-        <span class="title">Doctor</span>
-        <span class="desc">Manage patients & appointments</span>
+        <span class="role-icon">👨‍⚕️</span>
+        <span class="role-title">Medical Professional</span>
+        <span class="role-desc">Access patient management tools, appointment scheduling, electronic medical records, and prescription systems.</span>
+        
+        <div class="role-features">
+          <span class="feature-tag">Manage Appointments</span>
+          <span class="feature-tag">Access Patient Records</span>
+          <span class="feature-tag">Prescription Tools</span>
+          <span class="feature-tag">Medical Dashboard</span>
+          <span class="feature-tag">Patient Communication</span>
+          <span class="feature-tag">Medical History Review</span>
+        </div>
+        
+        <div class="selection-hint">
+          <i class="fas fa-arrow-right"></i> Click to continue as Doctor
+        </div>
       </button>
 
+      <!-- Patient Option -->
       <button type="submit" name="role" value="patient" class="role-card patient">
-        <span class="icon">👤</span>
-        <span class="title">Patient</span>
-        <span class="desc">Book appointments & track health</span>
+        <span class="role-icon">👤</span>
+        <span class="role-title">Patient</span>
+        <span class="role-desc">Book appointments with healthcare providers, track your health records, receive medical advice, and manage your health journey.</span>
+        
+        <div class="role-features">
+          <span class="feature-tag">Book Appointments</span>
+          <span class="feature-tag">Health Tracking</span>
+          <span class="feature-tag">Medical Records</span>
+          <span class="feature-tag">Doctor Consultations</span>
+          <span class="feature-tag">Prescription History</span>
+          <span class="feature-tag">Health Reminders</span>
+        </div>
+        
+        <div class="selection-hint">
+          <i class="fas fa-arrow-right"></i> Click to continue as Patient
+        </div>
       </button>
 
     </form>
+    
+    <!-- Additional Information -->
+    <div class="additional-info">
+      <h3><i class="fas fa-question-circle"></i> Need Help Choosing?</h3>
+      <p>
+        <strong><i class="fas fa-user-md"></i> Doctors & Medical Staff:</strong> Choose this role if you provide medical services, 
+        need to manage patient appointments, access medical records, issue prescriptions, or provide medical consultations.
+      </p>
+      <p>
+        <strong><i class="fas fa-user-injured"></i> Patients:</strong> Select this role if you're seeking medical care, 
+        want to book appointments, access your health records, consult with healthcare providers, or track your medical history.
+      </p>
+      
+      <div class="info-note">
+        <i class="fas fa-info-circle"></i> 
+        <strong>Important:</strong> You can change your role later from your profile settings if needed. 
+        Your selection determines the interface and features you'll see.
+      </div>
+    </div>
+
+    <!-- Security Note -->
+    <div style="text-align: center; margin-top: 30px; color: var(--text-light); font-size: 0.9rem;">
+      <p><i class="fas fa-shield-alt"></i> Your choice is secure and will be used only to personalize your experience</p>
+    </div>
+
   </div>
+
+  <script>
+    // Add visual feedback when a role is selected
+    document.querySelectorAll('.role-card').forEach(card => {
+      card.addEventListener('click', function() {
+        // Remove selected class from all cards
+        document.querySelectorAll('.role-card').forEach(c => {
+          c.classList.remove('selected');
+        });
+        
+        // Add selected class to clicked card
+        this.classList.add('selected');
+        
+        // Add a small delay to let user see the selection before form submission
+        setTimeout(() => {
+          this.closest('form').submit();
+        }, 300);
+      });
+    });
+    
+    // Add keyboard navigation for accessibility
+    document.addEventListener('keydown', function(e) {
+      const cards = document.querySelectorAll('.role-card');
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        const currentIndex = Array.from(cards).findIndex(card => card === document.activeElement);
+        let nextIndex;
+        
+        if (e.key === 'ArrowRight') {
+          nextIndex = (currentIndex + 1) % cards.length;
+        } else {
+          nextIndex = (currentIndex - 1 + cards.length) % cards.length;
+        }
+        
+        cards[nextIndex].focus();
+        e.preventDefault();
+      }
+      
+      // Enter key to submit focused form
+      if (e.key === 'Enter' && document.activeElement.classList.contains('role-card')) {
+        document.activeElement.click();
+      }
+    });
+    
+    // Add hover sound effect (optional)
+    const cards = document.querySelectorAll('.role-card');
+    cards.forEach(card => {
+      card.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-10px) scale(1.02)';
+      });
+      
+      card.addEventListener('mouseleave', function() {
+        if (!this.classList.contains('selected')) {
+          this.style.transform = 'translateY(0) scale(1)';
+        }
+      });
+    });
+    
+    // Focus the first card for better UX
+    document.addEventListener('DOMContentLoaded', function() {
+      const firstCard = document.querySelector('.role-card');
+      if (firstCard) {
+        firstCard.focus();
+      }
+    });
+  </script>
 
 </body>
 </html>

@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema(
   {
+    // 🔐 Auth / Identity
     googleId: {
       type: String,
       unique: true,
@@ -15,67 +16,39 @@ const UserSchema = new mongoose.Schema(
     },
 
     role: {
-  type: String,
-  enum: ["doctor", "patient"],
-  default: "patient",   // safe default
-  required: true
-},
+      type: String,
+      enum: ["doctor", "patient"],
+      default: "patient",
+      required: true
+    },
 
-roleSelected: {
-  type: Boolean,
-  default: false        // 👈 THIS IS THE KEY
-},
+    roleSelected: {
+      type: Boolean,
+      default: false
+    },
 
-
+    // 👤 Basic Profile
     name: String,
     contact: String,
     age: Number,
     address: String,
-    // Doctor profile fields
-degree: String,
-experience: Number, // years
-about: String,
-clinicAddress: String,
-
-// Patient profile fields
-address: String,
-emergencyContact: String,
-bloodGroup: String,
-
 
     profilePhoto: {
       type: String,
       default: ""
     },
 
-    // 👤 Patient-only fields
-    medicalConditions: {
-      type: [String],
-      default: []
-    },
+    // =========================
+    // 🧑‍⚕️ DOCTOR PROFILE
+    // =========================
 
-    // ✅ MULTIPLE DOCTORS PER PATIENT
-    doctors: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        default: []
-      }
-    ],
-
-    // ⏳ Patient → doctor requests
-    pendingDoctorRequests: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        default: []
-      }
-    ],
-
-    // 👨‍⚕️ Doctor-only fields
+    degree: String,
     specialization: String,
+    experience: Number, // years
+    about: String,
+    clinicAddress: String,
 
-    // ⏳ Doctor → patient requests
+    // Doctor → patient workflow
     pendingPatients: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -84,7 +57,6 @@ bloodGroup: String,
       }
     ],
 
-    // 👨‍⚕️ Approved patients
     patients: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -92,6 +64,47 @@ bloodGroup: String,
         default: []
       }
     ],
+
+    // =========================
+    // 🧑‍🦽 PATIENT PROFILE
+    // =========================
+
+    emergencyContact: String,
+    bloodGroup: String,
+
+    medicalConditions: {
+      type: [String],
+      default: []
+    },
+
+    // Additional health data
+    height: Number,
+    weight: Number,
+    allergies: String,
+    currentMedications: String,
+    surgeryHistory: String,
+    familyHistory: String,
+
+    // Patient → doctor workflow
+    doctors: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: []
+      }
+    ],
+
+    pendingDoctorRequests: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: []
+      }
+    ],
+
+    // =========================
+    // ✅ SYSTEM FLAGS
+    // =========================
 
     profileCompleted: {
       type: Boolean,
