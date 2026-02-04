@@ -124,24 +124,64 @@
   <hr>
 
   <!-- APPOINTMENTS -->
-  <h2>Appointments</h2>
+  <hr>
 
-  <% if (appointments.length === 0) { %>
-    <p>No appointments.</p>
-  <% } else { %>
-    <ul>
-      <% appointments.forEach(app => { %>
-        <li>
-          Patient: <%= app.patientId.name %><br>
-          Date: <%= app.date %><br>
-          Time: <%= app.time %><br>
-          Reason: <%= app.reason %><br>
-          Status: <%= app.status %>
-        </li>
-        <hr>
-      <% }) %>
-    </ul>
-  <% } %>
+<!-- APPOINTMENTS -->
+<h2>Appointments</h2>
+
+<% if (appointments.length === 0) { %>
+  <p>No appointments.</p>
+<% } else { %>
+  <ul style="list-style:none; padding:0;">
+    <% appointments.forEach(app => { %>
+
+      <li class="appointment-card">
+
+        <!-- ❌ Delete permanently (only if cancelled) -->
+        <% if (app.status === "cancelled") { %>
+          <form
+            method="POST"
+            action="/appointment/delete"
+            class="delete-form"
+            onsubmit="return confirm('Delete this cancelled appointment permanently?');"
+          >
+            <input type="hidden" name="appointmentId" value="<%= app._id %>">
+            <button type="submit" class="delete-btn" title="Delete appointment">
+              ❌
+            </button>
+          </form>
+        <% } %>
+
+        <strong>Patient:</strong> <%= app.patientId.name %><br>
+        <strong>Date:</strong> <%= app.date %><br>
+        <strong>Time:</strong> <%= app.time %><br>
+        <strong>Reason:</strong> <%= app.reason %><br>
+
+        <strong>Status:</strong> <%= app.status.toUpperCase() %>
+
+        <% if (app.status === "cancelled" && app.cancelledBy) { %>
+          <span style="color:red;">
+            (Cancelled by <%= app.cancelledBy %>)
+          </span>
+        <% } %>
+
+        <br><br>
+
+        <!-- ❌ Cancel (doctor) -->
+        <% if (app.status !== "cancelled" && app.status !== "completed") { %>
+          <form method="POST" action="/doctor/cancel-appointment">
+            <input type="hidden" name="appointmentId" value="<%= app._id %>">
+            <button type="submit">❌ Cancel Appointment</button>
+          </form>
+        <% } %>
+
+      </li>
+
+      <hr>
+    <% }) %>
+  </ul>
+<% } %>
+
 
   <br>
   <a href="/logout">Logout</a>

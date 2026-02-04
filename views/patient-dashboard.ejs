@@ -138,28 +138,43 @@
   <!-- MY APPOINTMENTS -->
   <h2>My Appointments</h2>
 
-  <% if (appointments.length === 0) { %>
-    <p>No appointments.</p>
-  <% } else { %>
-    <ul>
-      <% appointments.forEach(app => { %>
-        <li>
-          Doctor: <%= app.doctorId.name %><br>
-          Date: <%= app.date %><br>
-          Time: <%= app.time %><br>
-          Status: <%= app.status %>
+<% if (appointments.length === 0) { %>
+  <p>No appointments.</p>
+<% } else { %>
+  <ul>
+    <% appointments.forEach(app => { %>
+      <li style="margin-bottom:15px;">
 
+        <strong>Doctor:</strong> <%= app.doctorId.name %><br>
+        <strong>Date:</strong> <%= app.date %><br>
+        <strong>Time:</strong> <%= app.time %><br>
+
+        <strong>Status:</strong>
+        <%= app.status.toUpperCase() %>
+
+        <% if (app.status === "cancelled" && app.cancelledBy) { %>
+          <span style="color:red;">
+            (Cancelled by <%= app.cancelledBy %>)
+          </span>
+        <% } %>
+
+        <br><br>
+
+        <% if (app.status !== "cancelled" && app.status !== "completed") { %>
           <form method="POST" action="/patient/cancel-appointment">
             <input type="hidden" name="appointmentId" value="<%= app._id %>">
-            <button type="submit">Cancel</button>
+            <button type="submit">❌ Cancel</button>
           </form>
-        </li>
-        <hr>
-      <% }) %>
-    </ul>
-  <% } %>
+        <% } %>
 
-  <hr>
+      </li>
+      <hr>
+    <% }) %>
+  </ul>
+<% } %>
+
+<hr>
+
 
 <h2>Medical History</h2>
 

@@ -294,13 +294,6 @@ router.post("/patient/remove-doctor", ensureAuth, async (req, res) => {
 
 
 
-router.post("/patient/cancel-appointment", ensureAuth, async (req, res) => {
-  const { appointmentId } = req.body;
-
-  await Appointment.findByIdAndDelete(appointmentId);
-  res.redirect("/dashboard");
-});
-
 router.post("/doctor/add-history", ensureAuth, async (req, res) => {
   if (req.user.role !== "doctor") return res.redirect("/dashboard");
 
@@ -351,6 +344,76 @@ router.post("/doctor/edit-history/:id", ensureAuth, async (req, res) => {
 
   res.redirect("/doctor/patient/" + record.patientId);
 });
+
+
+router.post("/doctor/approve-appointment", ensureAuth, async (req, res) => {
+  if (req.user.role !== "doctor") return res.redirect("/dashboard");
+
+  await Appointment.findByIdAndUpdate(req.body.appointmentId, {
+    status: "approved"
+  });
+
+  res.redirect("/dashboard");
+});
+
+
+router.post("/doctor/complete-appointment", ensureAuth, async (req, res) => {
+  if (req.user.role !== "doctor") return res.redirect("/dashboard");
+
+  await Appointment.findByIdAndUpdate(req.body.appointmentId, {
+    status: "completed"
+  });
+
+  res.redirect("/dashboard");
+});
+
+
+router.post("/patient/cancel-appointment", ensureAuth, async (req, res) => {
+  if (req.user.role !== "patient") return res.redirect("/dashboard");
+
+  await Appointment.findByIdAndUpdate(req.body.appointmentId, {
+    status: "cancelled",
+    cancelledBy: "patient"
+  });
+
+  res.redirect("/dashboard");
+});
+
+
+router.post("/doctor/cancel-appointment", ensureAuth, async (req, res) => {
+  if (req.user.role !== "doctor") return res.redirect("/dashboard");
+
+  await Appointment.findByIdAndUpdate(req.body.appointmentId, {
+    status: "cancelled",
+    cancelledBy:"doctor"
+  });
+
+  res.redirect("/dashboard");
+});
+
+router.post("/appointment/delete", ensureAuth, async (req, res) => {
+  const { appointmentId } = req.body;
+
+  const appointment = await Appointment.findById(appointmentId);
+
+  // 🔒 Safety check
+  if (!appointment || appointment.status !== "cancelled") {
+    return res.redirect("/dashboard");
+  }
+
+  // Only doctor or patient involved can delete
+  if (
+    appointment.patientId.toString() !== req.user._id.toString() &&
+    appointment.doctorId.toString() !== req.user._id.toString()
+  ) {
+    return res.redirect("/dashboard");
+  }
+
+  await Appointment.findByIdAndDelete(appointmentId);
+  res.redirect("/dashboard");
+});
+
+
 
 
 
