@@ -144,21 +144,29 @@
   <ul>
     <% appointments.forEach(app => { %>
       <li style="margin-bottom:15px;">
+<strong>Doctor:</strong>
+<% if (app.doctorId) { %>
+  <%= app.doctorId.name %>
+<% } else { %>
+  <span style="color:red; font-size:12px;">
+    (account deleted)
+  </span>
+<% } %>
+<br>
 
-        <strong>Doctor:</strong> <%= app.doctorId.name %><br>
-        <strong>Date:</strong> <%= app.date %><br>
-        <strong>Time:</strong> <%= app.time %><br>
+<strong>Date:</strong> <%= app.date %><br>
+<strong>Time:</strong> <%= app.time %><br>
 
-        <strong>Status:</strong>
-        <%= app.status.toUpperCase() %>
+<strong>Status:</strong>
+<%= app.status.toUpperCase() %>
 
-        <% if (app.status === "cancelled" && app.cancelledBy) { %>
-          <span style="color:red;">
-            (Cancelled by <%= app.cancelledBy %>)
-          </span>
-        <% } %>
+<% if (app.status === "cancelled" && app.cancelledBy) { %>
+  <span style="color:red;">
+    (Cancelled by <%= app.cancelledBy %>)
+  </span>
+<% } %>
 
-        <br><br>
+<br><br>
 
         <% if (app.status !== "cancelled" && app.status !== "completed") { %>
           <form method="POST" action="/patient/cancel-appointment">
@@ -185,10 +193,15 @@
     <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
       
       <strong>Doctor:</strong>
-      <a href="/profile?user=<%= record.doctorId._email %>">
-        Dr. <%= record.doctorId.name %>
-      </a>
-      <br>
+<% if (record.doctorId) { %>
+  <a href="/profile?user=<%= record.doctorId.email %>">
+    Dr. <%= record.doctorId.name %>
+  </a>
+<% } else { %>
+  <span style="color:#999;">Doctor not available</span>
+<% } %>
+<br>
+
 
       <strong>Date:</strong>
       <%= record.createdAt.toDateString() %>

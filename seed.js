@@ -2,112 +2,128 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 
 const User = require("./models/User");
-
-const connectDB = async () => {
-  await mongoose.connect(process.env.MONGODB_URI);
-  console.log("MongoDB connected for seeding");
-};
+const connectDB = require("./config/db");
 
 const doctors = [
   {
     name: "Dr. Amit Sharma",
-    email: "amit.sharma@hospital.com",
+    email: "amit.sharma@healthcare.com",
     role: "doctor",
+    roleSelected: true,
+    profileCompleted: true,
     specialization: "Cardiologist",
-    degree: "MD (Cardiology)",
     experience: 12,
-    clinicAddress: "Apollo Hospital, Mumbai",
-    profileCompleted: true
+    contact: "9876543210",
+    age: 45,
+    address: "Mumbai, Maharashtra"
   },
   {
     name: "Dr. Neha Verma",
-    email: "neha.verma@hospital.com",
+    email: "neha.verma@healthcare.com",
     role: "doctor",
+    roleSelected: true,
+    profileCompleted: true,
     specialization: "Dermatologist",
-    degree: "MD (Dermatology)",
     experience: 8,
-    clinicAddress: "SkinCare Clinic, Pune",
-    profileCompleted: true
+    contact: "9876543211",
+    age: 38,
+    address: "Delhi"
   },
   {
-    name: "Dr. Rahul Mehta",
-    email: "rahul.mehta@hospital.com",
+    name: "Dr. Rakesh Patel",
+    email: "rakesh.patel@healthcare.com",
     role: "doctor",
+    roleSelected: true,
+    profileCompleted: true,
     specialization: "Orthopedic",
-    degree: "MS (Orthopedics)",
     experience: 15,
-    clinicAddress: "City Hospital, Ahmedabad",
-    profileCompleted: true
+    contact: "9876543212",
+    age: 50,
+    address: "Ahmedabad"
   },
   {
-    name: "Dr. Pooja Kulkarni",
-    email: "pooja.kulkarni@hospital.com",
+    name: "Dr. Sneha Iyer",
+    email: "sneha.iyer@healthcare.com",
     role: "doctor",
+    roleSelected: true,
+    profileCompleted: true,
     specialization: "Gynecologist",
-    degree: "MD (Gynecology)",
     experience: 10,
-    clinicAddress: "Mother Care Hospital, Nagpur",
-    profileCompleted: true
+    contact: "9876543213",
+    age: 42,
+    address: "Chennai"
   },
   {
-    name: "Dr. Sandeep Joshi",
-    email: "sandeep.joshi@hospital.com",
+    name: "Dr. Arjun Mehta",
+    email: "arjun.mehta@healthcare.com",
     role: "doctor",
+    roleSelected: true,
+    profileCompleted: true,
     specialization: "Neurologist",
-    degree: "DM (Neurology)",
-    experience: 18,
-    clinicAddress: "Neuro Center, Delhi",
-    profileCompleted: true
+    experience: 14,
+    contact: "9876543214",
+    age: 48,
+    address: "Pune"
   },
   {
-    name: "Dr. Anjali Deshpande",
-    email: "anjali.deshpande@hospital.com",
+    name: "Dr. Pooja Nair",
+    email: "pooja.nair@healthcare.com",
     role: "doctor",
+    roleSelected: true,
+    profileCompleted: true,
     specialization: "Pediatrician",
-    degree: "MD (Pediatrics)",
     experience: 9,
-    clinicAddress: "ChildCare Clinic, Nashik",
-    profileCompleted: true
+    contact: "9876543215",
+    age: 36,
+    address: "Kochi"
   },
   {
     name: "Dr. Vikram Singh",
-    email: "vikram.singh@hospital.com",
+    email: "vikram.singh@healthcare.com",
     role: "doctor",
+    roleSelected: true,
+    profileCompleted: true,
     specialization: "General Physician",
-    degree: "MBBS",
-    experience: 14,
-    clinicAddress: "HealthPlus Clinic, Jaipur",
-    profileCompleted: true
+    experience: 11,
+    contact: "9876543216",
+    age: 44,
+    address: "Jaipur"
   },
   {
     name: "Dr. Kavita Rao",
-    email: "kavita.rao@hospital.com",
+    email: "kavita.rao@healthcare.com",
     role: "doctor",
+    roleSelected: true,
+    profileCompleted: true,
     specialization: "ENT Specialist",
-    degree: "MS (ENT)",
-    experience: 11,
-    clinicAddress: "ENT Care Center, Hyderabad",
-    profileCompleted: true
+    experience: 7,
+    contact: "9876543217",
+    age: 35,
+    address: "Bangalore"
   },
   {
-    name: "Dr. Arjun Patel",
-    email: "arjun.patel@hospital.com",
+    name: "Dr. Mohit Khanna",
+    email: "mohit.khanna@healthcare.com",
     role: "doctor",
-    specialization: "Urologist",
-    degree: "MS (Urology)",
-    experience: 16,
-    clinicAddress: "LifeLine Hospital, Surat",
-    profileCompleted: true
-  },
-  {
-    name: "Dr. Ritu Malhotra",
-    email: "ritu.malhotra@hospital.com",
-    role: "doctor",
+    roleSelected: true,
+    profileCompleted: true,
     specialization: "Psychiatrist",
-    degree: "MD (Psychiatry)",
     experience: 13,
-    clinicAddress: "MindCare Clinic, Chandigarh",
-    profileCompleted: true
+    contact: "9876543218",
+    age: 46,
+    address: "Chandigarh"
+  },
+  {
+    name: "Dr. Anjali Deshmukh",
+    email: "anjali.deshmukh@healthcare.com",
+    role: "doctor",
+    roleSelected: true,
+    profileCompleted: true,
+    specialization: "Oncologist",
+    experience: 16,
+    contact: "9876543219",
+    age: 52,
+    address: "Nagpur"
   }
 ];
 
@@ -115,20 +131,17 @@ const seedDoctors = async () => {
   try {
     await connectDB();
 
-    for (const doc of doctors) {
-      const exists = await User.findOne({ email: doc.email });
-      if (!exists) {
-        await User.create(doc);
-        console.log(`✅ Added ${doc.name}`);
-      } else {
-        console.log(`⚠️ Skipped ${doc.name} (already exists)`);
-      }
-    }
+    // Optional: remove existing doctors with same emails
+    await User.deleteMany({
+      email: { $in: doctors.map(d => d.email) }
+    });
 
-    console.log("🎉 Doctor seeding completed");
+    await User.insertMany(doctors);
+
+    console.log("✅ 10 Doctors seeded successfully");
     process.exit();
-  } catch (err) {
-    console.error("❌ Seeding error:", err);
+  } catch (error) {
+    console.error("❌ Seeding failed:", error);
     process.exit(1);
   }
 };

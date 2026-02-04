@@ -50,8 +50,15 @@
         <br><br>
 
         <strong>Doctor:</strong>
-        Dr. <%= record.doctorId.name %>
-        <br><br>
+<% if (record.doctorId) { %>
+  Dr. <%= record.doctorId.name %>
+<% } else { %>
+  <span style="color:red; font-size:12px;">
+    (account deleted)
+  </span>
+<% } %>
+<br><br>
+
 
         <strong>Advice:</strong>
         <p><%= record.advice %></p>
@@ -68,11 +75,15 @@
           <p><%= record.notes %></p>
         <% } %>
 
-        <% if (record.doctorId._id.toString() === doctorId.toString()) { %>
-          <a href="/doctor/edit-history/<%= record._id %>">
-            ✏️ Edit Record
-          </a>
-        <% } %>
+        <% if (
+  record.doctorId &&
+  record.doctorId._id.toString() === doctorId.toString()
+) { %>
+  <a href="/doctor/edit-history/<%= record._id %>">
+    ✏️ Edit Record
+  </a>
+<% } %>
+
 
       </div>
     <% }) %>

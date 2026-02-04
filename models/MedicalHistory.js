@@ -8,11 +8,25 @@ const MedicalHistorySchema = new mongoose.Schema(
       required: true
     },
 
-    doctorId: {
+      doctorId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "User"
+    },
+    
+    doctorName: {
+      type: String,
       required: true
     },
+    
+    doctorEmail: {
+      type: String
+    },
+    
+    doctorDeleted: {
+      type: Boolean,
+      default: false
+    },
+
 
     advice: {
       type: String,

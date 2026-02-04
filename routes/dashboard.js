@@ -302,6 +302,8 @@ router.post("/doctor/add-history", ensureAuth, async (req, res) => {
   await MedicalHistory.create({
     patientId,
     doctorId: req.user._id,
+    doctorName: req.user.name,
+  doctorEmail: req.user.email,
     advice,
     medicines: medicines ? medicines.split(",") : [],
     notes
